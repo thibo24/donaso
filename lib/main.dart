@@ -2,9 +2,7 @@ import 'package:donaso/database.dart';
 import 'package:donaso/subscriptionPage.dart';
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

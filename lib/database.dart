@@ -52,4 +52,13 @@ class Database {
     var collection = db.collection(collectionName);
     return collection.find(where.eq(key, value)).toList();
   }
+
+  Future<bool> checkUser(String username) async {
+    var collection = db.collection('user');
+    var user = await collection.findOne(where.eq('username', username));
+    if (user == null) {
+      return true;
+    }
+    return false;
+  }
 }
