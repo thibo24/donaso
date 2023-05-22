@@ -3,7 +3,14 @@ import 'package:flutter/material.dart';
 import 'database.dart';
 import 'main.dart';
 
-class SubscriptionPage extends StatelessWidget {
+class SubscriptionPage extends StatefulWidget {
+  const SubscriptionPage({Key? key}) : super(key: key);
+
+  @override
+  _SubscriptionPageState createState() => _SubscriptionPageState();
+}
+
+class _SubscriptionPageState extends State<SubscriptionPage> {
   final TextEditingController loginController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -14,114 +21,150 @@ class SubscriptionPage extends StatelessWidget {
   bool isLoginValid = true;
   bool isPasswordValid = true;
   bool isEmailValid = true;
+  bool isPhoneValid = true;
   RegExp password = RegExp(r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$");
   RegExp email = RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-
-// Ajoutez d'autres variables booléennes pour les autres vérifications
-
-  SubscriptionPage({super.key});
+  RegExp phone = RegExp(r'^0[0-9]{9}$');
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Center(
-      child: Column(children: [
-        TextField(
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              errorText:
-                  isLoginValid ? null : 'Login is too short or already exists',
-              labelText: 'Login',
-            ),
-            controller: loginController,
-            onChanged: (value) async => {
-                  db = await Database.connect(),
-                  if (value.length <= 3 && await db.checkUser(value))
-                    {isLoginValid = false}
-                  else
-                    {isLoginValid = true}
-                }),
-        TextField(
-          decoration: InputDecoration(
-            border: const OutlineInputBorder(),
-            labelText: 'Password',
-            errorText: isPasswordValid
-                ? null
-                : 'password is too short or hasn\'t a number',
-          ),
-          obscureText: true,
-          autocorrect: false,
-          controller: passwordController,
-          onChanged: (value) => {
-            if (value.length <= 3 && !password.hasMatch(value))
-              {isPasswordValid = false}
-            else
-              {isPasswordValid = true}
-          },
-        ),
-        TextField(
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: 'First Name',
-          ),
-          obscureText: false,
-          autocorrect: false,
-          controller: firstNameController,
-        ),
-        TextField(
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: 'Last Name',
-          ),
-          obscureText: false,
-          autocorrect: false,
-          controller: lastNameController,
-        ),
-        TextField(
-          decoration: InputDecoration(
-            border: const OutlineInputBorder(),
-            labelText: 'Email',
-            errorText: isEmailValid ? null : 'email dosn\'t match the pattern',
-          ),
-          obscureText: false,
-          autocorrect: false,
-          controller: emailController,
-          onChanged: (value) => {
-            if (!email.hasMatch(value))
-              {isEmailValid = false}
-            else
-              {isEmailValid = true}
-          },
-        ),
-        TextField(
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: 'Phone',
-          ),
-          controller: phoneController,
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            if (isEmailValid && isLoginValid && isPasswordValid) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const MyHomePage(
+      backgroundColor: const Color.fromARGB(255, 3, 142, 13),
+      body: Center(
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          alignment: Alignment.center,
+          color: Colors.white,
+          child: Column(
+            children: [
+              const Expanded(child: SizedBox()),
+              TextField(
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  errorText: isLoginValid
+                      ? null
+                      : 'Login is too short or already exists',
+                  labelText: 'Login',
+                ),
+                controller: loginController,
+                onChanged: (value) async {
+                  setState(() async {
+                    isLoginValid =
+                        value.length > 4 || !(await db.checkUser(value));
+                  });
+                },
+              ),
+              TextField(
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  labelText: 'Password',
+                  errorText: isPasswordValid
+                      ? null
+                      : 'Password is too short or does not meet requirements',
+                ),
+                obscureText: true,
+                autocorrect: false,
+                controller: passwordController,
+                onChanged: (value) {
+                  setState(() {
+                    isPasswordValid = password.hasMatch(value);
+                  });
+                },
+              ),
+              TextField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'First Name',
+                ),
+                obscureText: false,
+                autocorrect: false,
+                controller: firstNameController,
+              ),
+              TextField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Last Name',
+                ),
+                obscureText: false,
+                autocorrect: false,
+                controller: lastNameController,
+              ),
+              TextField(
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  labelText: 'Email',
+                  errorText: isEmailValid ? null : 'Email is not valid',
+                ),
+                obscureText: false,
+                autocorrect: false,
+                controller: emailController,
+                onChanged: (value) {
+                  setState(() {
+                    isEmailValid = email.hasMatch(value);
+                  });
+                },
+              ),
+              TextField(
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  labelText: 'Phone',
+                  errorText: isPhoneValid ? null : 'Phone number is not valid',
+                ),
+                controller: phoneController,
+                onChanged: (value) {
+                  setState(() {
+                    isPhoneValid = phone.hasMatch(value);
+                  });
+                },
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  if (isEmailValid && isLoginValid && isPasswordValid) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MyHomePage(
                           title: "Donaso",
-                        )),
-              );
-              await db.addUser(
-                  loginController.text,
-                  passwordController.text,
-                  emailController.text,
-                  firstNameController.text,
-                  lastNameController.text,
-                  phoneController.text);
-            }
-          },
-          child: const Text('Submit'),
+                        ),
+                      ),
+                    );
+                    await db.addUser(
+                      loginController.text,
+                      passwordController.text,
+                      emailController.text,
+                      firstNameController.text,
+                      lastNameController.text,
+                      phoneController.text,
+                    );
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Error'),
+                          content: const Text(
+                            'Please check your information and try again',
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                },
+                child: const Text('Submit'),
+              ),
+              const Expanded(child: SizedBox()),
+            ],
+          ),
         ),
-      ]),
-    ));
+      ),
+    );
   }
 }

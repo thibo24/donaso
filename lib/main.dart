@@ -1,13 +1,13 @@
 import 'package:donaso/database.dart';
 import 'package:donaso/subscriptionPage.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -21,17 +21,39 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
   late Database db;
   TextEditingController loginController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: ['email', 'profile'], // Définissez les scopes d'accès requis
+  );
+
+  Future<void> _handleGoogleSignIn() async {
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+      if (googleUser != null) {
+        // Connexion réussie, récupérez les informations de l'utilisateur
+        final String email = googleUser.email;
+        final String? displayName = googleUser.displayName;
+        final String? photo = googleUser.photoUrl;
+
+        // Faites ce que vous voulez avec les informations de l'utilisateur
+        // Par exemple, enregistrez l'utilisateur dans votre base de données
+      }
+    } catch (error) {
+      // Gérez les erreurs de connexion
+      print('Erreur de connexion avec Google : $error');
+    }
+  }
 
   @override
   void dispose() {
@@ -74,7 +96,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             ElevatedButton(
               onPressed: () async {
-                db = await Database.connect();
                 List<Map<String, dynamic>> map = await db.selectSQL(
                     "user", "username", loginController.text);
                 if (map.isNotEmpty) {
@@ -110,10 +131,15 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () async {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SubscriptionPage()),
+                  MaterialPageRoute(
+                      builder: (context) => const SubscriptionPage()),
                 );
               },
               child: const Text("Inscription"),
+            ),
+            ElevatedButton(
+              onPressed: _handleGoogleSignIn,
+              child: const Text('Se connecter avec Google'),
             ),
           ],
         ),
