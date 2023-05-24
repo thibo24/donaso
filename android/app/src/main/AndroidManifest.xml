@@ -1,5 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.donaso">
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-feature android:name="android.hardware.location.gps" />
+
    <application
         android:label="donaso"
         android:name="${applicationName}"
@@ -30,5 +35,10 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <meta-data
+         android:name="com.google.android.geo.API_KEY"
+         android:value="AIzaSyDI07RHBuzYeqw89ekS6_ZDfUFWpaBStAo" />
+
+
     </application>
 </manifest>

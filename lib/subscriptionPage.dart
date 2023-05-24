@@ -4,7 +4,8 @@ import 'database.dart';
 import 'main.dart';
 
 class SubscriptionPage extends StatefulWidget {
-  const SubscriptionPage({Key? key}) : super(key: key);
+  Database db;
+  SubscriptionPage({Key? key, required this.db}) : super(key: key);
 
   @override
   _SubscriptionPageState createState() => _SubscriptionPageState();
@@ -17,7 +18,6 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
-  late Database db;
   bool isLoginValid = true;
   bool isPasswordValid = true;
   bool isEmailValid = true;
@@ -50,7 +50,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                 onChanged: (value) async {
                   setState(() async {
                     isLoginValid =
-                        value.length > 4 || !(await db.checkUser(value));
+                        value.length > 4 || !(await widget.db.checkUser(value));
                   });
                 },
               ),
@@ -123,12 +123,13 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const MyHomePage(
+                        builder: (context) => MyHomePage(
                           title: "Donaso",
+                          db: widget.db,
                         ),
                       ),
                     );
-                    await db.addUser(
+                    await widget.db.addUser(
                       loginController.text,
                       passwordController.text,
                       emailController.text,

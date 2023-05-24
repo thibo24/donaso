@@ -61,4 +61,34 @@ class Database {
     }
     return false;
   }
+
+  Future<void> insertLocation(double latitude, double longitude) async {
+    var collection = db.collection('location');
+    var location = {
+      'type': 'Point',
+      'coordinates': [longitude, latitude]
+    };
+
+    await collection.insert(location);
+  }
+
+  Future<List<Map<String, dynamic>>> findLocationsNearby(
+      double latitude, double longitude, double? maxDistance) async {
+    var collection = db.collection('location');
+    maxDistance ??= 1000;
+    var query = {
+      'coordinates': {
+        '\$near': {
+          '\$geometry': {
+            'type': 'Point',
+            'coordinates': [longitude, latitude]
+          },
+          '\$maxDistance': maxDistance
+        }
+      }
+    };
+
+    var result = await collection.find(query).toList();
+    return result.map((doc) => doc as Map<String, dynamic>).toList();
+  }
 }

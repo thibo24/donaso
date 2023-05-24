@@ -1,12 +1,17 @@
 import 'package:donaso/database.dart';
+import 'package:donaso/maps.dart';
 import 'package:donaso/subscriptionPage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-void main() => runApp(const MyApp());
+void main() async {
+  Database data = await Database.connect();
+  runApp(MyApp(db: data));
+}
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  Database db;
+  MyApp({Key? key, required this.db}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,21 +20,25 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(
+        title: 'Flutter Demo Home Page',
+        db: db,
+      ),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  MyHomePage({Key? key, required this.title, required this.db})
+      : super(key: key);
   final String title;
+  Database db;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late Database db;
   TextEditingController loginController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   GoogleSignIn _googleSignIn = GoogleSignIn(
@@ -96,20 +105,25 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             ElevatedButton(
               onPressed: () async {
-                List<Map<String, dynamic>> map = await db.selectSQL(
-                    "user", "username", loginController.text);
+                List<Map<String, dynamic>> map = await widget.db
+                    .selectSQL("user", "username", loginController.text);
                 if (map.isNotEmpty) {
                   map.forEach((element) {
                     if (element["password"] == passwordController.text) {
                       debugPrint("Mot de passe correct");
+                      passwordController.clear();
                       Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const MyHomePage(
-                                title: 'Flutter Demo Home Page')),
-                      );
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Maps(
+                              username: loginController.text,
+                              db: widget.db,
+                            ),
+                          ));
+                      //TODO passer le login en paramettre dans maps
                     } else {
                       debugPrint("Mot de passe incorrect");
+                      passwordController.clear();
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text("Password incorrect"),
@@ -118,6 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     }
                   });
                 } else {
+                  passwordController.clear();
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text("Utilisateur inconnu"),
@@ -132,7 +147,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const SubscriptionPage()),
+                      builder: (context) => SubscriptionPage(
+                            db: widget.db,
+                          )),
                 );
               },
               child: const Text("Inscription"),
