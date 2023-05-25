@@ -183,7 +183,7 @@ class _CameraScreenState extends State<CameraScreen> {
       appBar: AppBar(
         title: const Text('DoNaSo'),
       ),
-      bottomNavigationBar: navigationBar(),
+      bottomNavigationBar: CustomBottomNavigationBar(),
       body: Stack(
         children: [
           Positioned.fill(
