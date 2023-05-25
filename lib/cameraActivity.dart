@@ -1,22 +1,73 @@
 import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/database.dart';
+import 'package:flutter_application_2/navigationBar.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'AI.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  final cameras = await availableCameras();
-  final firstCamera = cameras.first;
-  runApp(MyApp(camera: firstCamera));
+  runApp(StartPage());
 }
 
-class MyApp extends StatelessWidget {
+class StartPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'My App',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: AppLoader(),
+    );
+  }
+}
+
+class AppLoader extends StatelessWidget {
+  final Future<List<CameraDescription>> camerasFuture = availableCameras();
+  final Future<Database> databaseFuture = Database.connect();
+
+  AppLoader({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: Future.wait([camerasFuture, databaseFuture]),
+      builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return Scaffold(
+            body: Center(
+              child: Text('Error occurred: ${snapshot.error}'),
+            ),
+          );
+        } else {
+          final cameras = snapshot.data![0] as List<CameraDescription>;
+          final database = snapshot.data![1] as Database;
+          final firstCamera = cameras.first;
+          return Home(
+            camera: firstCamera,
+            database: database,
+          );
+        }
+      },
+    );
+  }
+}
+
+
+class Home extends StatelessWidget {
   final CameraDescription camera;
+  final Database database;
   final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
-  MyApp({required this.camera});
+  Home({required this.camera, required this.database});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +77,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: CameraScreen(camera: camera),
+      home: CameraScreen(camera: camera, database: database),
       navigatorObservers: [routeObserver],
     );
   }
@@ -34,8 +85,9 @@ class MyApp extends StatelessWidget {
 
 class CameraScreen extends StatefulWidget {
   final CameraDescription camera;
+  final Database database;
 
-  CameraScreen({required this.camera});
+  CameraScreen({required this.camera, required this.database});
 
   @override
   _CameraScreenState createState() => _CameraScreenState();
@@ -101,7 +153,7 @@ class _CameraScreenState extends State<CameraScreen> {
       await Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => TfliteModel(image: _imageFile!),
+          builder: (context) => TfliteModel(image: _imageFile!, db: widget.database),
         ),
       );
 
@@ -131,6 +183,7 @@ class _CameraScreenState extends State<CameraScreen> {
       appBar: AppBar(
         title: const Text('DoNaSo'),
       ),
+      bottomNavigationBar: navigationBar(),
       body: Stack(
         children: [
           Positioned.fill(
