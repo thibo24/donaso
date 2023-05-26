@@ -56,11 +56,25 @@ class Database {
         name: categoryDocument['name'],
         image: categoryDocument['imageLink'],
         description: categoryDocument['description']
-        // Initialisez les autres propriétés de catégorie à partir des données récupérées
       );
       return category;
     }
     throw Exception('Category not found');
+  }
+
+  Future<List<Categorie>> createCategories() async {
+    final collection = db.collection('category');
+    final categories = <Categorie>[];
+    final categoryDocuments = await collection.find().toList();
+    for (var categoryDocument in categoryDocuments) {
+      final category = Categorie(
+        name: categoryDocument['name'],
+        image: categoryDocument['imageLink'],
+        description: categoryDocument['description'],
+      );
+      categories.add(category);
+    }
+    return categories;
   }
 
 

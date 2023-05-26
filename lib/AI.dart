@@ -1,9 +1,10 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/category.dart';
 import 'package:flutter_tflite/flutter_tflite.dart';
 
+
+import 'category.dart';
 import 'database.dart';
 
 class TfliteModel extends StatefulWidget {

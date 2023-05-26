@@ -7,87 +7,13 @@ import 'package:image_picker/image_picker.dart';
 
 import 'AI.dart';
 
-void main() async {
-  runApp(StartPage());
-}
-
-class StartPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'My App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: AppLoader(),
-    );
-  }
-}
-
-class AppLoader extends StatelessWidget {
-  final Future<List<CameraDescription>> camerasFuture = availableCameras();
-  final Future<Database> databaseFuture = Database.connect();
-
-  AppLoader({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: Future.wait([camerasFuture, databaseFuture]),
-      builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        } else if (snapshot.hasError) {
-          return Scaffold(
-            body: Center(
-              child: Text('Error occurred: ${snapshot.error}'),
-            ),
-          );
-        } else {
-          final cameras = snapshot.data![0] as List<CameraDescription>;
-          final database = snapshot.data![1] as Database;
-          final firstCamera = cameras.first;
-          return Home(
-            camera: firstCamera,
-            database: database,
-          );
-        }
-      },
-    );
-  }
-}
-
-
-class Home extends StatelessWidget {
-  final CameraDescription camera;
-  final Database database;
-  final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
-
-  Home({required this.camera, required this.database});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Camera App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: CameraScreen(camera: camera, database: database),
-      navigatorObservers: [routeObserver],
-    );
-  }
-}
-
 class CameraScreen extends StatefulWidget {
   final CameraDescription camera;
   final Database database;
+  final int selectedIndex;
+  final Function(int) onPageSelected; // Callback function
 
-  CameraScreen({required this.camera, required this.database});
+  CameraScreen({required this.camera, required this.database, required this.selectedIndex, required this.onPageSelected});
 
   @override
   _CameraScreenState createState() => _CameraScreenState();
@@ -183,7 +109,7 @@ class _CameraScreenState extends State<CameraScreen> {
       appBar: AppBar(
         title: const Text('DoNaSo'),
       ),
-      bottomNavigationBar: CustomBottomNavigationBar(),
+      bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: widget.selectedIndex, onItemSelected: widget.onPageSelected),
       body: Stack(
         children: [
           Positioned.fill(
@@ -220,14 +146,14 @@ class _CameraScreenState extends State<CameraScreen> {
           ),
           Center(
             child: Container(
-              width: MediaQuery.of(context).size.width * 0.8, // Largeur du cadre (80% de l'écran)
-              height: MediaQuery.of(context).size.width * 0.8, // Hauteur du cadre (80% de l'écran)
+              width: MediaQuery.of(context).size.width * 0.8,
+              height: MediaQuery.of(context).size.width * 0.8,
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.white, width: 2), // Bordure blanche
-                borderRadius: BorderRadius.circular(20), // Bords arrondis
+                border: Border.all(color: Colors.white, width: 2),
+                borderRadius: BorderRadius.circular(20),
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(20), // Bords arrondis pour l'image
+                borderRadius: BorderRadius.circular(20),
                 child: AspectRatio(
                   aspectRatio: 1.0,
                   child: _imageFile != null
@@ -247,19 +173,21 @@ class _CameraScreenState extends State<CameraScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
-                  children: [
-                    Transform.scale(
-                      scale: 1.3, // Définir la valeur d'échelle pour agrandir le bouton (1.0 représente la taille normale)
-                      child: FloatingActionButton(
-                        onPressed: _takePhoto,
-                        child: Icon(Icons.camera),
-                      ),
-                    ), SizedBox(height: 30),// Marge entre les deux boutons
-                  Container(
-                    width: 32, // Largeur de la ligne blanche
-                    height: 2, // Hauteur de la ligne blanche
-                    color: Colors.white, // Couleur de la ligne blanche
-                  )]),
+                    children: [
+                      Transform.scale(
+                        scale: 1.3,
+                        child: FloatingActionButton(
+                          onPressed: _takePhoto,
+                          child: Icon(Icons.camera),
+                        ),
+                      ), SizedBox(height: 30),
+                      Container(
+                        width: 32,
+                        height: 2,
+                        color: Colors.white, // Couleur de la ligne blanche
+                      )
+                    ],
+                  ),
                   SizedBox(width: MediaQuery.of(context).size.width / 4),
                   FloatingActionButton(
                     onPressed: _openGallery,
