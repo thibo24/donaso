@@ -3,6 +3,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/database.dart';
 import 'package:flutter_application_2/navigationBar.dart';
+import 'package:flutter_application_2/borderPainter.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'AI.dart';
@@ -148,21 +149,22 @@ class _CameraScreenState extends State<CameraScreen> {
             child: Container(
               width: MediaQuery.of(context).size.width * 0.8,
               height: MediaQuery.of(context).size.width * 0.8,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.white, width: 2),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: AspectRatio(
-                  aspectRatio: 1.0,
-                  child: _imageFile != null
-                      ? Image.file(_imageFile!, fit: BoxFit.cover)
-                      : Container(),
+              child: CustomPaint(
+                painter: BorderPainter(cornerSide: 30),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: AspectRatio(
+                    aspectRatio: 1.0,
+                    child: _imageFile != null
+                        ? Image.file(_imageFile!, fit: BoxFit.cover)
+                        : Container(),
+                  ),
                 ),
               ),
             ),
           ),
+
+
           Positioned(
             bottom: 16,
             right: 16,
