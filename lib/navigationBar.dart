@@ -13,7 +13,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
             icon: Icon(Icons.photo_camera),
-            label: 'Photo',
+            label: 'Picture',
             backgroundColor: Colors.black),
         BottomNavigationBarItem(
             icon: Icon(Icons.map), label: 'Map', backgroundColor: Colors.black),

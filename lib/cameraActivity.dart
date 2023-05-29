@@ -107,11 +107,9 @@ class _CameraScreenState extends State<CameraScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('DoNaSo'),
-      ),
       bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: widget.selectedIndex, onItemSelected: widget.onPageSelected),
-      body: Stack(
+      body:
+      Stack(
         children: [
           Positioned.fill(
             child: _imageFile != null
@@ -130,11 +128,12 @@ class _CameraScreenState extends State<CameraScreen> {
             ),
           ),
           Positioned(
-            top: 16,
+            top: MediaQuery.of(context).size.height * 0.1, // Ajustez cette valeur selon vos besoins
             left: 16,
             child: Visibility(
               visible: _isButtonVisible,
               child: FloatingActionButton(
+                backgroundColor: Colors.black,
                 onPressed: () {
                   setState(() {
                     _isFlashOn = !_isFlashOn;
@@ -180,19 +179,28 @@ class _CameraScreenState extends State<CameraScreen> {
                         scale: 1.3,
                         child: FloatingActionButton(
                           onPressed: _takePhoto,
-                          child: Icon(Icons.camera),
+                          backgroundColor: Colors.white,
+                          child: Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.black,
+                            ),
+                          ),
                         ),
                       ), SizedBox(height: 30),
                       Container(
-                        width: 32,
-                        height: 2,
+                        width: 90,
+                        height: 5,
                         color: Colors.white, // Couleur de la ligne blanche
                       )
                     ],
                   ),
-                  SizedBox(width: MediaQuery.of(context).size.width / 4),
+                  SizedBox(width: MediaQuery.of(context).size.width / 5),
                   FloatingActionButton(
                     onPressed: _openGallery,
+                    backgroundColor: Colors.black,
                     child: Icon(Icons.photo_library),
                   ),
                 ],
