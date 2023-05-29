@@ -1,12 +1,23 @@
+import 'dart:io';
+
 import 'package:camera/camera.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/allActivity.dart';
 import 'cameraActivity.dart';
 import 'database.dart';
 
 void main() async {
+  HttpOverrides.global = MyHttpOverrides();
   runApp(StartPage());
+}
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
 }
 
 class StartPage extends StatelessWidget {
@@ -18,7 +29,9 @@ class StartPage extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: AppLoader(selectedIndex: 0,),
+      home: AppLoader(
+        selectedIndex: 0,
+      ),
     );
   }
 }

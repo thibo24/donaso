@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_application_2/category.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 import 'constant.dart';
@@ -20,6 +22,7 @@ class Database {
     var collection = db.collection(collectionName);
     return collection.find().toList();
   }
+
 
   Future<void> writeCollection(String collectionName, String params) async {
     var collection = db.collection(collectionName);
@@ -53,9 +56,9 @@ class Database {
     final categoryDocument = await collection.findOne(where.eq('name', name));
     if (categoryDocument != null) {
       final category = Categorie(
-        name: categoryDocument['name'],
-        image: categoryDocument['imageLink'],
-        description: categoryDocument['description']
+          name: categoryDocument['name'],
+          image: categoryDocument['imageLink'],
+          description: categoryDocument['description']
       );
       return category;
     }
@@ -78,9 +81,8 @@ class Database {
   }
 
 
-
-  Future<List<Map<String, dynamic>>> selectSQL(
-      String collectionName, String key, String value) {
+  Future<List<Map<String, dynamic>>> selectSQL(String collectionName,
+      String key, String value) {
     var collection = db.collection(collectionName);
     return collection.find(where.eq(key, value)).toList();
   }
@@ -94,5 +96,5 @@ class Database {
     return false;
   }
 
-
 }
+
