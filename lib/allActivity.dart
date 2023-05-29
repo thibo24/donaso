@@ -35,9 +35,6 @@ class _CameraScreenState extends State<AllScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("All categories"),
-      ),
       bottomNavigationBar: CustomBottomNavigationBar(
         selectedIndex: widget.selectedIndex,
         onItemSelected: widget.onPageSelected,
@@ -74,6 +71,8 @@ class _CameraScreenState extends State<AllScreen> {
                         return categoryDetail(
                           categorie: category,
                           db: widget.database,
+                          selectedIndex: widget.selectedIndex,
+                          onItemSelected: widget.onPageSelected,
                         );
                       },
                     ));

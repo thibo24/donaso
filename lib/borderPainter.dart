@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class BorderPainter extends CustomPainter {
@@ -8,8 +7,8 @@ class BorderPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    double sh = size.height; // for convenient shortage
-    double sw = size.width; // for convenient shortage
+    double sh = size.height;
+    double sw = size.width;
 
     Paint paint = Paint()
       ..color = Colors.white

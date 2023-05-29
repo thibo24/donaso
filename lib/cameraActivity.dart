@@ -193,7 +193,7 @@ class _CameraScreenState extends State<CameraScreen> {
                       Container(
                         width: 90,
                         height: 5,
-                        color: Colors.white, // Couleur de la ligne blanche
+                        color: Colors.white,
                       )
                     ],
                   ),
