@@ -2,19 +2,18 @@ import 'package:donaso/database.dart';
 import 'package:donaso/maps.dart';
 import 'package:donaso/subscriptionPage.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:bcrypt/bcrypt.dart';
 
 void main() async {
   Database data = await Database.connect();
   print("-----------------zizi-------------------------");
   try {
     // Provide the latitude, longitude, and maxDistance values
-    double latitude = 5.540932;
-    double longitude = 43.283085;
     double maxDistance = 10000;
-
-    // Call the findLocationsNearby function
-    var locations = await data.findLocationsNearby(longitude, latitude);
+    var locations =
+        await data.findLocationsNearby(-122.084969, 37.421725, maxDistance);
     // Longitude
     // Print the retrieved locations
     for (var location in locations) {
@@ -94,6 +93,26 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
+  Future<void> requestLocationPermission() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (permission == LocationPermission.denied || !isLocationServiceEnabled) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        throw Exception("Non autorisé");
+      }
+      if (!isLocationServiceEnabled) {
+        throw Exception("Service de localisation désactivé");
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    requestLocationPermission();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,7 +151,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     .selectSQL("user", "username", loginController.text);
                 if (map.isNotEmpty) {
                   map.forEach((element) {
-                    if (element["password"] == passwordController.text) {
+                    if (BCrypt.checkpw(
+                        passwordController.text, element["password"])) {
                       debugPrint("Mot de passe correct");
                       passwordController.clear();
                       Navigator.push(

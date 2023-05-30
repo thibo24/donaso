@@ -18,42 +18,56 @@ class Maps extends StatefulWidget {
 
 class MapsState extends State<Maps> {
   late GoogleMapController mapController;
-  final double maxDistance = 10000000000; // Distance maximale en mètres
-  late Position position;
+  final double maxDistance = 10000; // Distance maximale en mètres
+  Position? position;
   Set<Marker> markers = {};
   Location location = Location();
   BitmapDescriptor? basicBin;
-  BitmapDescriptor? glassBin;
-  BitmapDescriptor? Bin;
-
+  BitmapDescriptor? recyclingBin;
+  BitmapDescriptor? compostBin;
   @override
   void initState() {
     super.initState();
     requestLocationPermission();
     loadbasicBin();
-    getCurrentLocation();
+  }
+
+  BitmapDescriptor getMarkerIcon(String binType) {
+    print("type : $binType");
+    if (binType == 'Type 1') {
+      return recyclingBin ?? BitmapDescriptor.defaultMarker;
+    } else if (binType == 'Type 2') {
+      return compostBin ?? BitmapDescriptor.defaultMarker;
+    } else {
+      return basicBin ?? BitmapDescriptor.defaultMarker;
+    }
   }
 
   Future<void> getMarkers() async {
+    if (position == null) return;
+
     var collection = await widget.db.findLocationsNearby(
-      position.longitude,
-      position.latitude,
+      position!.longitude,
+      position!.latitude,
+      maxDistance,
     );
     setState(() {
       markers.clear();
       for (var location in collection) {
-        var coordinates = location['location']['coordinates'];
-        markers.add(
-          Marker(
-            markerId: MarkerId(location['_id'].toString()),
-            position: LatLng(coordinates[1], coordinates[0]),
-            icon: basicBin!,
-            infoWindow: InfoWindow(
-              title: location['description'],
-              snippet: location['description'],
+        var coordinates = location['location']?['coordinates'];
+        if (coordinates != null && coordinates.length >= 2) {
+          markers.add(
+            Marker(
+              markerId: MarkerId(location['_id'].toString()),
+              position: LatLng(coordinates[1], coordinates[0]),
+              icon: getMarkerIcon(location['type'] ?? ''),
+              infoWindow: InfoWindow(
+                title: location['name'] ?? '',
+                snippet: location['description'] ?? '',
+              ),
             ),
-          ),
-        );
+          );
+        }
       }
       print(markers.length);
     });
@@ -61,23 +75,38 @@ class MapsState extends State<Maps> {
 
   Future<void> requestLocationPermission() async {
     LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
+    bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (permission == LocationPermission.denied || !isLocationServiceEnabled) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        return Future.error("non autorisé");
-        // L'utilisateur a refusé l'autorisation de localisation
+        throw Exception("Non autorisé");
+      }
+      if (!isLocationServiceEnabled) {
+        throw Exception("Service de localisation désactivé");
       }
     }
   }
 
   Future<void> loadbasicBin() async {
     try {
-      final Uint8List markerIconData = await getBytesFromAsset(
-        'assets/images/recyling-bin.png',
+      print("Chargement de l'icône du marqueur");
+      print(markers.length);
+      final Uint8List markerBasicBin = await getBytesFromAsset(
+        'assets/images/chiengue.png',
+        100,
+      );
+      final Uint8List markerRecycleBin = await getBytesFromAsset(
+        'assets/images/recycling-bin-2.png',
+        100,
+      );
+      final Uint8List markerCompostBin = await getBytesFromAsset(
+        'assets/images/recycling-bin.png',
         100,
       );
       setState(() {
-        basicBin = BitmapDescriptor.fromBytes(markerIconData);
+        basicBin = BitmapDescriptor.fromBytes(markerBasicBin);
+        recyclingBin = BitmapDescriptor.fromBytes(markerRecycleBin);
+        compostBin = BitmapDescriptor.fromBytes(markerCompostBin);
       });
     } catch (e) {
       print('Erreur lors du chargement de l\'icône du marqueur : $e');
@@ -96,20 +125,17 @@ class MapsState extends State<Maps> {
         .asUint8List();
   }
 
-  Future<void> getCurrentLocation() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      // Les services de localisation sont désactivés
-      // Demandez à l'utilisateur de les activer
-      return;
+  Future<Position> getCurrentLocation() async {
+    bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!isLocationServiceEnabled) {
+      throw Exception("Services de localisation désactivés");
     }
 
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        // L'utilisateur a refusé l'autorisation de localisation
-        return;
+        throw Exception("Non autorisé");
       }
     }
 
@@ -117,24 +143,44 @@ class MapsState extends State<Maps> {
     setState(() {
       position = currentPosition;
     });
+    if (markers.isEmpty) {
+      getMarkers();
+    }
 
-    getMarkers();
+    return currentPosition;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GoogleMap(
-        onMapCreated: (GoogleMapController controller) {
-          mapController = controller;
+      body: FutureBuilder<Position>(
+        future: getCurrentLocation(),
+        builder: (BuildContext context, AsyncSnapshot<Position> snapshot) {
+          if (snapshot.hasData) {
+            final position = snapshot.data!;
+            return GoogleMap(
+              onMapCreated: (GoogleMapController controller) {
+                mapController = controller;
+              },
+              initialCameraPosition: CameraPosition(
+                target: LatLng(position.latitude, position.longitude),
+                zoom: 12.0,
+              ),
+              markers: markers,
+              myLocationEnabled: true,
+              myLocationButtonEnabled: false,
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                  'Impossible de récupérer la position actuelle: ${snapshot.error}'),
+            );
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
         },
-        initialCameraPosition: CameraPosition(
-          target: LatLng(position.latitude, position.longitude),
-          zoom: 12.0,
-        ),
-        markers: markers,
-        myLocationEnabled: true,
-        myLocationButtonEnabled: false,
       ),
     );
   }

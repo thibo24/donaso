@@ -73,8 +73,9 @@ class Database {
   }
 
   Future<List<Map<String, dynamic>>> findLocationsNearby(
-      double longitude, double latitude) async {
+      double longitude, double latitude, double? maxDistance) async {
     var collection = db.collection('location');
+    maxDistance ??= 1000;
     var query = {
       'location': {
         '\$near': {
@@ -82,6 +83,7 @@ class Database {
             'type': 'Point',
             'coordinates': [longitude, latitude]
           },
+          '\$maxDistance': maxDistance
         }
       }
     };
@@ -90,15 +92,24 @@ class Database {
     return result.map((doc) => doc as Map<String, dynamic>).toList();
   }
 
-  Future<void> insertLocationFull(double latitude, double longitude,
-      String tableName, String description) async {
-    final collection = db.collection(tableName);
+  Future<List<Map<String, dynamic>>> findLocationsNearbyByType(
+      double longitude, double latitude, String type) async {
+    var map = await findLocationsNearby(longitude, latitude, 10000);
+    var result = map.where((element) => element['type'] == type).toList();
+    return result;
+  }
+
+  Future<void> insertLocationFull(double longitude, double latitude,
+      String name, String description, String type) async {
+    final collection = db.collection("location");
 
     final document = {
       'location': {
         'type': 'Point',
         'coordinates': [longitude, latitude]
       },
+      'type': type,
+      'name': name,
       'description': description,
     };
 
