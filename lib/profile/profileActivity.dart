@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/profile/dataPrivacy.dart';
+import 'package:flutter_application_2/profile/settings.dart';
 import 'package:flutter_application_2/profile/user.dart';
 import '../database.dart';
 import '../navigationBar.dart';
@@ -49,7 +51,11 @@ class _profileActivityState extends State<profileActivity> {
                     ),
                   ),
                   Column(children: [
-                    Text(widget.user.username, style: const TextStyle(fontSize: 20), selectionColor: Colors.black,),
+                    Text(
+                      widget.user.username,
+                      style: const TextStyle(fontSize: 20),
+                      selectionColor: Colors.black,
+                    ),
                     Text('${widget.user.nbPoints} points'),
                   ]),
                 ]),
@@ -62,7 +68,10 @@ class _profileActivityState extends State<profileActivity> {
                     ),
                     ListTile(
                       leading: Image.asset("assets/images/reward.png"),
-                      trailing: const Icon(Icons.arrow_forward_ios, color: Colors.green,),
+                      trailing: const Icon(
+                        Icons.arrow_forward_ios,
+                        color: Colors.green,
+                      ),
                       title: const Text(
                         "Rewards",
                         style: TextStyle(
@@ -111,7 +120,7 @@ class _profileActivityState extends State<profileActivity> {
                     ),
                     ListTile(
                       leading: Image.asset("assets/images/edit.png"),
-                      trailing: Icon(
+                      trailing: const Icon(
                         Icons.arrow_forward_ios,
                         color: Colors.grey,
                       ),
@@ -129,7 +138,7 @@ class _profileActivityState extends State<profileActivity> {
                     ),
                     ListTile(
                       leading: Image.asset("assets/images/settings.png"),
-                      trailing: Icon(
+                      trailing: const Icon(
                         Icons.arrow_forward_ios,
                         color: Colors.grey,
                       ),
@@ -139,24 +148,30 @@ class _profileActivityState extends State<profileActivity> {
                           color: Colors.grey,
                         ),
                       ),
-                      // onTap: () => redirect to settings page
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => settings(user: widget.user, db: widget.database, selectedIndex: widget.selectedIndex, onItemSelected: widget.onPageSelected)),
+                      )
                     ),
                     const Divider(
                       color: Colors.grey, // Couleur de la démarcation
                       thickness: 1.5, // Épaisseur de la démarcation
                     ),
-                    const ListTile(
-                      trailing: Icon(
+                    ListTile(
+                      trailing: const Icon(
                         Icons.arrow_forward_ios,
                         color: Colors.grey,
                       ),
-                      title: Text(
+                      title: const Text(
                         "Data Privacy",
                         style: TextStyle(
                           color: Colors.grey,
                         ),
                       ),
-                      // onTap: () => redirect to data privacy page
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => dataPrivacy(user: widget.user, db: widget.database, selectedIndex: widget.selectedIndex, onItemSelected: widget.onPageSelected)),
+                        )
                     ),
                     const Divider(
                       color: Colors.grey, // Couleur de la démarcation
@@ -173,7 +188,7 @@ class _profileActivityState extends State<profileActivity> {
                           color: Colors.redAccent,
                         ),
                       ),
-                      // onTap: () => redirect to login page
+
                     ),
                   ],
                 ))

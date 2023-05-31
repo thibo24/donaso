@@ -80,6 +80,18 @@ class Database {
     return categories;
   }
 
+  Future<String> getPrivacyConditions() async {
+    final collection = db.collection('privacyConditions');
+    final privacyCondition = await collection.findOne();
+    if (privacyCondition != null && privacyCondition.containsKey('text')) {
+      final text = privacyCondition['text'].toString();
+      return text;
+    } else {
+      return '';
+    }
+  }
+
+
 
   Future<List<Map<String, dynamic>>> selectSQL(String collectionName,
       String key, String value) {
