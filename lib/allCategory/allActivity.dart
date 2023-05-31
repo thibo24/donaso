@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/categoryDetail.dart';
+import 'package:flutter_application_2/allCategory/categoryDetail.dart';
 import 'category.dart';
-import 'database.dart';
-import 'navigationBar.dart';
+import '../database.dart';
+import '../navigationBar.dart';
 
 class AllScreen extends StatefulWidget {
   late Database database;

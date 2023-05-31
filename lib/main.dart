@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/allActivity.dart';
-import 'cameraActivity.dart';
+import 'package:flutter_application_2/allCategory/allActivity.dart';
+import 'package:flutter_application_2/profile/profileActivity.dart';
+import 'package:flutter_application_2/profile/user.dart';
+import 'camera/cameraActivity.dart';
 import 'database.dart';
 
 void main() async {
@@ -106,7 +108,19 @@ class _AppLoaderState extends State<AppLoader> {
               ),
             );
           } else {
-            return Container();
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              title: 'Camera App',
+              theme: ThemeData(
+                primarySwatch: Colors.blue,
+              ),
+              home: profileActivity(
+                database: database,
+                selectedIndex: selectedIndex,
+                onPageSelected: onPageSelected,
+                user: User(email: "b", username: 'c', nbPoints: 10, firstName: 'b', lastName: 'b')// Pass the callback function
+              ),
+            );
           }
         }
       },

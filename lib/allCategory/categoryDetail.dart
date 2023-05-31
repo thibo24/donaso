@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'category.dart';
-import 'database.dart';
-import 'navigationBar.dart';
+import '../database.dart';
+import '../navigationBar.dart';
 
 class categoryDetail extends StatefulWidget {
   final Categorie categorie;

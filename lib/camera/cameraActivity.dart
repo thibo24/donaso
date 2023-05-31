@@ -3,17 +3,15 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/database.dart';
 import 'package:flutter_application_2/navigationBar.dart';
-import 'package:flutter_application_2/borderPainter.dart';
+import 'package:flutter_application_2/camera/borderPainter.dart';
 import 'package:image_picker/image_picker.dart';
-
 import 'AI.dart';
 
 class CameraScreen extends StatefulWidget {
   final CameraDescription camera;
   final Database database;
   final int selectedIndex;
-  final Function(int) onPageSelected; // Callback function
-
+  final Function(int) onPageSelected;
   CameraScreen({required this.camera, required this.database, required this.selectedIndex, required this.onPageSelected});
 
   @override
@@ -80,7 +78,7 @@ class _CameraScreenState extends State<CameraScreen> {
       await Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => TfliteModel(image: _imageFile!, db: widget.database),
+          builder: (context) => TfliteModel(image: _imageFile!, db: widget.database, selectedItem: widget.selectedIndex, onItemSelected: widget.onPageSelected),
         ),
       );
 
