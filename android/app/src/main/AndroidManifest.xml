@@ -39,6 +39,18 @@
          android:name="com.google.android.geo.API_KEY"
          android:value="AIzaSyDI07RHBuzYeqw89ekS6_ZDfUFWpaBStAo" />
 
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.gms.games.APP_ID"
+            android:value="146537769855-qplkk9e7bmbipljt1kljc156jvl3nig5.apps.googleusercontent.com" />
+        <meta-data
+            android:name="com.google.android.gms.appstate.APP_ID"
+            android:value="146537769855-qplkk9e7bmbipljt1kljc156jvl3nig5.apps.googleusercontent.com" />
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="146537769855-qplkk9e7bmbipljt1kljc156jvl3nig5.apps.googleusercontent.com" />
 
     </application>
 </manifest>

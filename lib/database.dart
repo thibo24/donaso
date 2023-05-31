@@ -1,5 +1,6 @@
 import 'package:donaso/constant.dart';
 import 'package:mongo_dart/mongo_dart.dart';
+import 'package:bcrypt/bcrypt.dart';
 
 class Database {
   late final Db db;
@@ -9,7 +10,7 @@ class Database {
   Database(Function() connect);
 
   static Future<Database> connect() async {
-    var db = await Db.create(MONGO_URL);
+    var db = await Db.create(mangoUrl);
     await db.open();
     return Database._(db);
   }
@@ -31,16 +32,18 @@ class Database {
   }
 
   Future<void> addUser(String username, String password, String email,
-      String firstName, String lastName, String phone) async {
-    final collection = db.collection('user');
+      String firstName, String lastName, String phone, String? image) async {
+    final collection = db.collection(userTable);
+    String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
     final newUser = {
       '_id': ObjectId(),
       'username': username,
-      'password': password,
+      'password': hashedPassword,
       'email': email,
       'firstName': firstName,
       'lastName': lastName,
       'phoneNumber': phone,
+      'image': '',
       'points': 0,
     };
 
@@ -54,7 +57,7 @@ class Database {
   }
 
   Future<bool> checkUser(String username) async {
-    var collection = db.collection('user');
+    var collection = db.collection(userTable);
     var user = await collection.findOne(where.eq('username', username));
     if (user == null) {
       return true;
@@ -62,19 +65,9 @@ class Database {
     return false;
   }
 
-  Future<void> insertLocation(double latitude, double longitude) async {
-    var collection = db.collection('location');
-    var location = {
-      'type': 'Point',
-      'coordinates': [longitude, latitude]
-    };
-
-    await collection.insert(location);
-  }
-
   Future<List<Map<String, dynamic>>> findLocationsNearby(
       double longitude, double latitude, double? maxDistance) async {
-    var collection = db.collection('location');
+    var collection = db.collection(locName);
     maxDistance ??= 1000;
     var query = {
       'location': {
@@ -99,9 +92,9 @@ class Database {
     return result;
   }
 
-  Future<void> insertLocationFull(double longitude, double latitude,
-      String name, String description, String type) async {
-    final collection = db.collection("location");
+  Future<void> insertLocation(double longitude, double latitude, String name,
+      String description, String type) async {
+    final collection = db.collection(locName);
 
     final document = {
       'location': {
@@ -117,7 +110,34 @@ class Database {
   }
 
   Future<void> location() async {
-    var collection = db.collection('location');
+    var collection = db.collection(locName);
     await collection.createIndex(keys: {'coordinates': '2dsphere'});
+  }
+
+  Future<void> addUserGoogle(
+      String email, String firstName, String lastName, String username) async {
+    final collection = db.collection(userTable);
+    final newUser = {
+      '_id': ObjectId(),
+      'username': email,
+      'password': '',
+      'email': email,
+      'firstName': firstName,
+      'lastName': lastName,
+      'phoneNumber': '',
+      'image': null,
+      'points': 0,
+    };
+
+    await collection.insert(newUser);
+  }
+
+  bool checkUserGoogle(String email) {
+    var collection = db.collection(userTable);
+    var user = collection.findOne(where.eq('username', email));
+    if (user == null) {
+      return true;
+    }
+    return false;
   }
 }

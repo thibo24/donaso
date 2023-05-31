@@ -8,26 +8,6 @@ import 'package:bcrypt/bcrypt.dart';
 
 void main() async {
   Database data = await Database.connect();
-  print("-----------------zizi-------------------------");
-  try {
-    // Provide the latitude, longitude, and maxDistance values
-    double maxDistance = 10000;
-    var locations =
-        await data.findLocationsNearby(-122.084969, 37.421725, maxDistance);
-    // Longitude
-    // Print the retrieved locations
-    for (var location in locations) {
-      var coordinates = location['location']['coordinates'];
-      print('Latitude: ${coordinates[1]}');
-      print('Longitude: ${coordinates[0]}');
-      print('Description: ${location['description']}');
-      print('--------------');
-    }
-  } catch (e) {
-    print('Error: $e');
-  }
-  print("-----------------zizi-------------------------");
-
   runApp(MyApp(db: data));
 }
 
@@ -38,12 +18,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Login page',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       home: MyHomePage(
-        title: 'Flutter Demo Home Page',
+        title: 'Login page',
         db: db,
       ),
     );
@@ -63,7 +43,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   TextEditingController loginController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  GoogleSignIn _googleSignIn = GoogleSignIn(
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: ['email', 'profile'], // Définissez les scopes d'accès requis
   );
 
@@ -74,16 +54,37 @@ class _MyHomePageState extends State<MyHomePage> {
       if (googleUser != null) {
         // Connexion réussie, récupérez les informations de l'utilisateur
         final String email = googleUser.email;
-        final String? displayName = googleUser.displayName;
-        final String? photo = googleUser.photoUrl;
+        final String? userid = googleUser.id;
 
-        // Faites ce que vous voulez avec les informations de l'utilisateur
-        // Par exemple, enregistrez l'utilisateur dans votre base de données
+        String fullName = googleUser.displayName ?? '';
+        List<String> nameParts = fullName.split(' ');
+
+        String firstName = nameParts.isNotEmpty ? nameParts.first : '';
+        String lastName = nameParts.length > 1 ? nameParts.last : '';
+
+        if (widget.db.checkUserGoogle(email)) {
+          navigateToMaps(fullName);
+        } else {
+          widget.db.addUserGoogle(email, firstName, lastName, fullName);
+          navigateToMaps(fullName);
+        }
       }
     } catch (error) {
       // Gérez les erreurs de connexion
       print('Erreur de connexion avec Google : $error');
     }
+  }
+
+  void navigateToMaps(String fullName) {
+    final mapsPage = Maps(
+      username: fullName,
+      db: widget.db,
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => mapsPage),
+    );
   }
 
   @override

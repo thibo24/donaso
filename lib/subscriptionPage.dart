@@ -130,13 +130,13 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                       ),
                     );
                     await widget.db.addUser(
-                      loginController.text,
-                      passwordController.text,
-                      emailController.text,
-                      firstNameController.text,
-                      lastNameController.text,
-                      phoneController.text,
-                    );
+                        loginController.text,
+                        passwordController.text,
+                        emailController.text,
+                        firstNameController.text,
+                        lastNameController.text,
+                        phoneController.text,
+                        null);
                   } else {
                     showDialog(
                       context: context,

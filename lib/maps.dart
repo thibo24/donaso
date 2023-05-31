@@ -166,6 +166,8 @@ class MapsState extends State<Maps> {
                 target: LatLng(position.latitude, position.longitude),
                 zoom: 12.0,
               ),
+              zoomControlsEnabled: false,
+              buildingsEnabled: true,
               markers: markers,
               myLocationEnabled: true,
               myLocationButtonEnabled: false,
