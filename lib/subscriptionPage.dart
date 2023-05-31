@@ -49,8 +49,8 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                 controller: loginController,
                 onChanged: (value) async {
                   setState(() async {
-                    isLoginValid =
-                        value.length > 4 || !(await widget.db.checkUser(value));
+                    isLoginValid = value.length > 4 ||
+                        !(await widget.db.checkUserIsAvailable(value));
                   });
                 },
               ),

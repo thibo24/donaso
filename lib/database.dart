@@ -56,13 +56,28 @@ class Database {
     return collection.find(where.eq(key, value)).toList();
   }
 
-  Future<bool> checkUser(String username) async {
+  Future<bool> checkUserIsAvailable(String username) async {
     var collection = db.collection(userTable);
     var user = await collection.findOne(where.eq('username', username));
     if (user == null) {
       return true;
     }
     return false;
+  }
+
+  Future<bool> checkUser(String user, String password) async {
+    List<Map<String, dynamic>> map = await selectSQL("user", "username", user);
+    bool isUserValid = false;
+
+    if (map.isNotEmpty) {
+      map.forEach((element) {
+        if (BCrypt.checkpw(password, element["password"])) {
+          isUserValid = true;
+        }
+      });
+    }
+
+    return isUserValid;
   }
 
   Future<List<Map<String, dynamic>>> findLocationsNearby(

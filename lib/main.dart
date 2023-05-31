@@ -4,7 +4,7 @@ import 'package:donaso/subscriptionPage.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:bcrypt/bcrypt.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   Database data = await Database.connect();
@@ -87,6 +87,29 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  void saveAccount() {
+    print("save account called");
+    print(loginController.text);
+    print(passwordController.text);
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setString("username", loginController.text);
+      prefs.setString("password", passwordController.text);
+    });
+  }
+
+  void isSavedAccount() async {
+    print("is saved account called");
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? username = prefs.getString('username');
+    print(username);
+    String? password = prefs.getString('password');
+    print(password);
+    if (await widget.db.checkUser(username!, password!)) {
+      navigateToMaps(username);
+    }
+  }
+
   @override
   void dispose() {
     loginController.dispose();
@@ -112,6 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     requestLocationPermission();
+    isSavedAccount();
   }
 
   @override
@@ -148,38 +172,16 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             ElevatedButton(
               onPressed: () async {
-                List<Map<String, dynamic>> map = await widget.db
-                    .selectSQL("user", "username", loginController.text);
-                if (map.isNotEmpty) {
-                  map.forEach((element) {
-                    if (BCrypt.checkpw(
-                        passwordController.text, element["password"])) {
-                      debugPrint("Mot de passe correct");
-                      passwordController.clear();
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Maps(
-                              username: loginController.text,
-                              db: widget.db,
-                            ),
-                          ));
-                      //TODO passer le login en paramettre dans maps
-                    } else {
-                      debugPrint("Mot de passe incorrect");
-                      passwordController.clear();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Password incorrect"),
-                        ),
-                      );
-                    }
-                  });
+                if (await widget.db
+                    .checkUser(loginController.text, passwordController.text)) {
+                  saveAccount();
+                  navigateToMaps(loginController.text);
                 } else {
+                  debugPrint("Mot de passe incorrect");
                   passwordController.clear();
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text("Utilisateur inconnu"),
+                      content: Text("Password incorrect"),
                     ),
                   );
                 }
@@ -191,9 +193,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => SubscriptionPage(
-                            db: widget.db,
-                          )),
+                    builder: (context) => SubscriptionPage(
+                      db: widget.db,
+                    ),
+                  ),
                 );
               },
               child: const Text("Inscription"),
