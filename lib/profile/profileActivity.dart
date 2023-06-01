@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/profile/dataPrivacy.dart';
 import 'package:flutter_application_2/profile/settings.dart';
 import 'package:flutter_application_2/profile/user.dart';
+import 'package:social_share/social_share.dart';
 import '../database.dart';
 import '../navigationBar.dart';
 
@@ -19,6 +20,7 @@ class profileActivity extends StatefulWidget {
   @override
   _profileActivityState createState() => _profileActivityState();
 }
+
 
 class _profileActivityState extends State<profileActivity> {
   @override
@@ -96,6 +98,9 @@ class _profileActivityState extends State<profileActivity> {
                           color: Colors.lightBlueAccent,
                         ),
                       ),
+                      onTap: () {
+                        SocialShare.shareTwitter("Hello world");
+                      },
                     ),
                     const Divider(
                       color: Colors.grey, // Couleur de la démarcation
@@ -113,6 +118,9 @@ class _profileActivityState extends State<profileActivity> {
                           color: Colors.blue,
                         ),
                       ),
+                      onTap: () => {
+                      SocialShare.shareWhatsapp("Hello world"),
+                      },
                     ),
                     const Divider(
                       color: Colors.grey, // Couleur de la démarcation
