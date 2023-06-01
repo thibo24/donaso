@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:bcrypt/bcrypt.dart';
 import 'package:flutter_application_2/allCategory/category.dart';
+import 'package:flutter_application_2/profile/user.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 import 'constant.dart';
 
@@ -35,21 +37,24 @@ class Database {
   }
 
   Future<void> addUser(String username, String password, String email,
-      String firstName, String lastName, String phone) async {
-    final collection = db.collection('user');
+      String firstName, String lastName, String phone, String? image) async {
+    final collection = db.collection(userTable);
+    String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
     final newUser = {
       '_id': ObjectId(),
       'username': username,
-      'password': password,
+      'password': hashedPassword,
       'email': email,
       'firstName': firstName,
       'lastName': lastName,
       'phoneNumber': phone,
+      'image': '',
       'points': 0,
     };
 
     await collection.insert(newUser);
   }
+
 
   Future<Categorie> createCategory(String name) async {
     final collection = db.collection('category');
@@ -99,10 +104,111 @@ class Database {
     return collection.find(where.eq(key, value)).toList();
   }
 
-  Future<bool> checkUser(String username) async {
-    var collection = db.collection('user');
+  Future<bool> checkUserIsAvailable(String username) async {
+    var collection = db.collection(userTable);
     var user = await collection.findOne(where.eq('username', username));
     if (user == null) {
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> checkUser(String user, String password) async {
+    List<Map<String, dynamic>> map = await selectSQL("user", "username", user);
+    bool isUserValid = false;
+
+    if (map.isNotEmpty) {
+      map.forEach((element) {
+        if (BCrypt.checkpw(password, element["password"])) {
+          isUserValid = true;
+        }
+      });
+    }
+
+    return isUserValid;
+  }
+
+  Future<User> createUser(String username) async {
+    var collection = db.collection(userTable);
+    var user = await collection.findOne(where.eq('username', username));
+    if (user == null) {
+      throw Exception('User not found');
+    }
+    return User(username: user['username'] ,email: user['email'].toString(), nbPoints: user['points'], firstName: user['username'].toString(), lastName: user['lastname'].toString());
+  }
+
+  Future<List<Map<String, dynamic>>> findLocationsNearby(
+      double longitude, double latitude, double? maxDistance) async {
+    var collection = db.collection(locName);
+    maxDistance ??= 1000;
+    var query = {
+      'location': {
+        '\$near': {
+          '\$geometry': {
+            'type': 'Point',
+            'coordinates': [longitude, latitude]
+          },
+          '\$maxDistance': maxDistance
+        }
+      }
+    };
+
+    var result = await collection.find(query).toList();
+    return result.map((doc) => doc as Map<String, dynamic>).toList();
+  }
+
+  Future<List<Map<String, dynamic>>> findLocationsNearbyByType(
+      double longitude, double latitude, String type) async {
+    var map = await findLocationsNearby(longitude, latitude, 10000);
+    var result = map.where((element) => element['type'] == type).toList();
+    return result;
+  }
+
+  Future<void> insertLocation(double longitude, double latitude, String name,
+      String description, String type) async {
+    final collection = db.collection(locName);
+
+    final document = {
+      'location': {
+        'type': 'Point',
+        'coordinates': [longitude, latitude]
+      },
+      'type': type,
+      'name': name,
+      'description': description,
+    };
+
+    await collection.insert(document);
+  }
+
+  Future<void> location() async {
+    var collection = db.collection(locName);
+    await collection.createIndex(keys: {'coordinates': '2dsphere'});
+  }
+
+  Future<void> addUserGoogle(
+      String email, String firstName, String lastName, String username) async {
+    final collection = db.collection(userTable);
+    final newUser = {
+      '_id': ObjectId(),
+      'username': firstName,
+      'password': '',
+      'email': email,
+      'firstName': firstName,
+      'lastName': lastName,
+      'phoneNumber': '',
+      'image': null,
+      'points': 0,
+    };
+
+    await collection.insert(newUser);
+  }
+
+  Future<bool> checkUserGoogle(String firstName) async{
+    var collection = db.collection(userTable);
+    var user = await collection.findOne(where.eq('username', firstName));
+    print(user.toString());
+    if (user != null) {
       return true;
     }
     return false;

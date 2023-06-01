@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/main.dart';
 import 'package:flutter_application_2/profile/profileActivity.dart';
 import 'package:flutter_application_2/profile/user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../database.dart';
 import '../navigationBar.dart';
 
@@ -103,7 +105,6 @@ class _settingsState extends State<settings> {
                       ),
                       trailing: Icon(Icons.dangerous),
                       onTap: () {
-                        // Handle onTap event
                       },
                     ),
                   ),

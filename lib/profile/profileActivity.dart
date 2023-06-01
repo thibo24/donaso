@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/profile/dataPrivacy.dart';
 import 'package:flutter_application_2/profile/settings.dart';
 import 'package:flutter_application_2/profile/user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:social_share/social_share.dart';
 import '../database.dart';
+import '../main.dart';
 import '../navigationBar.dart';
 
 class profileActivity extends StatefulWidget {
@@ -23,6 +25,17 @@ class profileActivity extends StatefulWidget {
 
 
 class _profileActivityState extends State<profileActivity> {
+
+  Future<void> clearSharedPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+  }
+
+  void navigateToLogin(){
+    final loginMenu = MyApp(db: widget.database);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => loginMenu));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,7 +67,7 @@ class _profileActivityState extends State<profileActivity> {
                   ),
                   Column(children: [
                     Text(
-                      widget.user.username,
+                      widget.user.firstName,
                       style: const TextStyle(fontSize: 20),
                       selectionColor: Colors.black,
                     ),
@@ -185,18 +198,21 @@ class _profileActivityState extends State<profileActivity> {
                       color: Colors.grey, // Couleur de la démarcation
                       thickness: 1.5, // Épaisseur de la démarcation
                     ),
-                    const ListTile(
-                      trailing: Icon(
+                    ListTile(
+                      trailing: const Icon(
                         Icons.exit_to_app,
                         color: Colors.redAccent,
                       ),
-                      title: Text(
+                      title: const Text(
                         "Logout",
                         style: TextStyle(
                           color: Colors.redAccent,
                         ),
                       ),
-
+                      onTap: () {
+                        clearSharedPreferences();
+                        navigateToLogin();
+                        },
                     ),
                   ],
                 ))
