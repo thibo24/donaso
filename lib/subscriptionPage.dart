@@ -50,7 +50,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                 onChanged: (value) async {
                   setState(() async {
                     isLoginValid = value.length > 4 ||
-                        !(await widget.db.checkUserIsAvailable(value));
+                        !(await widget.db.checkUserNameIsAvailable(value));
                   });
                 },
               ),
@@ -72,24 +72,6 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                 },
               ),
               TextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'First Name',
-                ),
-                obscureText: false,
-                autocorrect: false,
-                controller: firstNameController,
-              ),
-              TextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Last Name',
-                ),
-                obscureText: false,
-                autocorrect: false,
-                controller: lastNameController,
-              ),
-              TextField(
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   labelText: 'Email',
@@ -99,8 +81,10 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                 autocorrect: false,
                 controller: emailController,
                 onChanged: (value) {
-                  setState(() {
-                    isEmailValid = email.hasMatch(value);
+                  setState(() async {
+                    isEmailValid = email.hasMatch(value) ||
+                        !(await widget.db.checkUserEmailIsAvailable(value));
+                    ;
                   });
                 },
               ),
@@ -133,8 +117,6 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                         loginController.text,
                         passwordController.text,
                         emailController.text,
-                        firstNameController.text,
-                        lastNameController.text,
                         phoneController.text,
                         null);
                   } else {

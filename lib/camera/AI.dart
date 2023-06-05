@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tflite/flutter_tflite.dart';
 
-
 import '../allCategory/category.dart';
 import '../database.dart';
 import '../navigationBar.dart';
@@ -14,7 +13,13 @@ class TfliteModel extends StatefulWidget {
   final int selectedItem;
   final Function(int) onItemSelected;
 
-  TfliteModel({Key? key, required this.image, required this.db, required this.selectedItem, required this.onItemSelected}) : super(key: key);
+  TfliteModel(
+      {Key? key,
+      required this.image,
+      required this.db,
+      required this.selectedItem,
+      required this.onItemSelected})
+      : super(key: key);
 
   @override
   _TfliteModelState createState() => _TfliteModelState();
@@ -24,14 +29,16 @@ class _TfliteModelState extends State<TfliteModel> {
   late List<dynamic> _results;
   late String _imagePath;
   late String _title;
-  late Future<Categorie> _categorieFuture; // Utiliser un Future pour l'initialisation de la catégorie
+  late Future<Categorie>
+      _categorieFuture; // Utiliser un Future pour l'initialisation de la catégorie
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
     loadModel();
-    _categorieFuture = initializeCategorie(); // Appeler la fonction d'initialisation de la catégorie
+    _categorieFuture =
+        initializeCategorie(); // Appeler la fonction d'initialisation de la catégorie
   }
 
   Future<void> loadModel() async {
@@ -96,18 +103,16 @@ class _TfliteModelState extends State<TfliteModel> {
                     SingleChildScrollView(
                       child: Row(
                         children: [
-                          SizedBox(width: MediaQuery
-                              .of(context)
-                              .size
-                              .width * 0.25,),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.25,
+                          ),
                           Card(
                             child: Container(
                               height: 120.0,
                               width: 120.0,
                               decoration: BoxDecoration(
                                 image: DecorationImage(
-                                  image: NetworkImage(
-                                      categorie.image),
+                                  image: NetworkImage(categorie.image),
                                   fit: BoxFit.fill,
                                 ),
                                 shape: BoxShape.rectangle,
@@ -130,10 +135,7 @@ class _TfliteModelState extends State<TfliteModel> {
                         ],
                       ),
                     ),
-                    SizedBox(height: MediaQuery
-                        .of(context)
-                        .size
-                        .height * 0.09),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.09),
                     Container(
                       margin: const EdgeInsets.all(10),
                       child: Text(
@@ -145,7 +147,8 @@ class _TfliteModelState extends State<TfliteModel> {
                       ),
                     ),
                     const SizedBox(height: 30),
-                    Center(child: Container(
+                    Center(
+                        child: Container(
                       width: MediaQuery.of(context).size.width / 2,
                       height: 4,
                       color: Colors.black,
@@ -194,7 +197,6 @@ class _TfliteModelState extends State<TfliteModel> {
                       ),
                     ),
                     const SizedBox(height: 10),
-
                   ],
                 ));
           }

@@ -27,16 +27,13 @@ class profileActivity extends StatefulWidget {
   _profileActivityState createState() => _profileActivityState();
 }
 
-
 class _profileActivityState extends State<profileActivity> {
-
-
   Future<void> clearSharedPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear();
   }
 
-  void navigateToLogin(){
+  void navigateToLogin() {
     final loginMenu = MyApp(db: widget.database);
     Navigator.push(context, MaterialPageRoute(builder: (context) => loginMenu));
   }
@@ -72,7 +69,7 @@ class _profileActivityState extends State<profileActivity> {
                   ),
                   Column(children: [
                     Text(
-                      widget.user.firstName,
+                      widget.user.username,
                       style: const TextStyle(fontSize: 20),
                       selectionColor: Colors.black,
                     ),
@@ -101,7 +98,12 @@ class _profileActivityState extends State<profileActivity> {
                       onTap: () => {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => rewards(user: widget.user, db: widget.database, selectedIndex: widget.selectedIndex, onItemSelected: widget.onPageSelected)),
+                          MaterialPageRoute(
+                              builder: (context) => rewards(
+                                  user: widget.user,
+                                  db: widget.database,
+                                  selectedIndex: widget.selectedIndex,
+                                  onItemSelected: widget.onPageSelected)),
                         )
                       },
                     ),
@@ -142,7 +144,7 @@ class _profileActivityState extends State<profileActivity> {
                         ),
                       ),
                       onTap: () => {
-                      SocialShare.shareWhatsapp("Hello world"),
+                        SocialShare.shareWhatsapp("Hello world"),
                       },
                     ),
                     const Divider(
@@ -150,65 +152,77 @@ class _profileActivityState extends State<profileActivity> {
                       thickness: 1.5, // Épaisseur de la démarcation
                     ),
                     ListTile(
-                      leading: Image.asset("assets/images/edit.png"),
-                      trailing: const Icon(
-                        Icons.arrow_forward_ios,
-                        color: Colors.grey,
-                      ),
-                      title: const Text(
-                        "Edit profile",
-                        style: TextStyle(
+                        leading: Image.asset("assets/images/edit.png"),
+                        trailing: const Icon(
+                          Icons.arrow_forward_ios,
                           color: Colors.grey,
                         ),
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                           context,
-                           MaterialPageRoute(builder: (context) => editProfile(user: widget.user, db: widget.database, selectedIndex: widget.selectedIndex, onItemSelected: widget.onPageSelected)),
-                         );
-                      }
-                    ),
+                        title: const Text(
+                          "Edit profile",
+                          style: TextStyle(
+                            color: Colors.grey,
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => editProfile(
+                                    user: widget.user,
+                                    db: widget.database,
+                                    selectedIndex: widget.selectedIndex,
+                                    onItemSelected: widget.onPageSelected)),
+                          );
+                        }),
                     const Divider(
                       color: Colors.grey, // Couleur de la démarcation
                       thickness: 1.5, // Épaisseur de la démarcation
                     ),
                     ListTile(
-                      leading: Image.asset("assets/images/settings.png"),
-                      trailing: const Icon(
-                        Icons.arrow_forward_ios,
-                        color: Colors.grey,
-                      ),
-                      title: const Text(
-                        "Settings",
-                        style: TextStyle(
+                        leading: Image.asset("assets/images/settings.png"),
+                        trailing: const Icon(
+                          Icons.arrow_forward_ios,
                           color: Colors.grey,
                         ),
-                      ),
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => settings(user: widget.user, db: widget.database, selectedIndex: widget.selectedIndex, onItemSelected: widget.onPageSelected)),
-                      )
-                    ),
-                    const Divider(
-                      color: Colors.grey, // Couleur de la démarcation
-                      thickness: 1.5, // Épaisseur de la démarcation
-                    ),
-                    ListTile(
-                      trailing: const Icon(
-                        Icons.arrow_forward_ios,
-                        color: Colors.grey,
-                      ),
-                      title: const Text(
-                        "Data Privacy",
-                        style: TextStyle(
-                          color: Colors.grey,
+                        title: const Text(
+                          "Settings",
+                          style: TextStyle(
+                            color: Colors.grey,
+                          ),
                         ),
-                      ),
                         onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => dataPrivacy(user: widget.user, db: widget.database, selectedIndex: widget.selectedIndex, onItemSelected: widget.onPageSelected)),
-                        )
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => settings(
+                                      user: widget.user,
+                                      db: widget.database,
+                                      selectedIndex: widget.selectedIndex,
+                                      onItemSelected: widget.onPageSelected)),
+                            )),
+                    const Divider(
+                      color: Colors.grey, // Couleur de la démarcation
+                      thickness: 1.5, // Épaisseur de la démarcation
                     ),
+                    ListTile(
+                        trailing: const Icon(
+                          Icons.arrow_forward_ios,
+                          color: Colors.grey,
+                        ),
+                        title: const Text(
+                          "Data Privacy",
+                          style: TextStyle(
+                            color: Colors.grey,
+                          ),
+                        ),
+                        onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => dataPrivacy(
+                                      user: widget.user,
+                                      db: widget.database,
+                                      selectedIndex: widget.selectedIndex,
+                                      onItemSelected: widget.onPageSelected)),
+                            )),
                     const Divider(
                       color: Colors.grey, // Couleur de la démarcation
                       thickness: 1.5, // Épaisseur de la démarcation
@@ -227,7 +241,7 @@ class _profileActivityState extends State<profileActivity> {
                       onTap: () {
                         clearSharedPreferences();
                         navigateToLogin();
-                        },
+                      },
                     ),
                   ],
                 ))

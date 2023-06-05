@@ -46,7 +46,8 @@ class _AppLoaderState extends State<AppLoader> {
           );
         } else {
           final cameras = snapshot.data![0] as List<CameraDescription>;
-          final database = widget.db; // Utilisez la variable widget.db au lieu de snapshot.data![1]
+          final database = widget
+              .db; // Utilisez la variable widget.db au lieu de snapshot.data![1]
           final firstCamera = cameras.first;
 
           if (selectedIndex == 0) {
@@ -64,7 +65,7 @@ class _AppLoaderState extends State<AppLoader> {
                 onPageSelected: onPageSelected, // Pass the callback function
               ),
             );
-          } else if(selectedIndex == 1){
+          } else if (selectedIndex == 1) {
             return MaterialApp(
               debugShowCheckedModeBanner: false,
               title: 'Camera App',
@@ -74,11 +75,11 @@ class _AppLoaderState extends State<AppLoader> {
               home: Maps(
                 db: widget.db,
                 selectedIndex: selectedIndex,
-                onPageSelected: onPageSelected, user: widget.user, // Pass the callback function
+                onPageSelected: onPageSelected,
+                user: widget.user, // Pass the callback function
               ),
             );
-          }
-          else if (selectedIndex == 2) {
+          } else if (selectedIndex == 2) {
             return MaterialApp(
               debugShowCheckedModeBanner: false,
               title: 'Camera App',
@@ -102,7 +103,8 @@ class _AppLoaderState extends State<AppLoader> {
                 database: database,
                 selectedIndex: selectedIndex,
                 onPageSelected: onPageSelected,
-                user: widget.user, // Utilisez la variable widget.user au lieu de créer un nouvel utilisateur ici
+                user: widget
+                    .user, // Utilisez la variable widget.user au lieu de créer un nouvel utilisateur ici
               ),
             );
           }
