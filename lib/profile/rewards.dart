@@ -23,8 +23,17 @@ class rewards extends StatefulWidget {
 }
 
 class _rewardsState extends State<rewards> {
+
+  void reloadPage(){
+    final rewardss = rewards(user: widget.user, db: widget.db, selectedIndex: widget.selectedIndex, onItemSelected: widget.onItemSelected);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => rewardss));
+  }
+
   @override
   Widget build(BuildContext context) {
+    bool hasEnoughPoints1 = widget.user.nbPoints >= 5;
+    bool hasEnoughPoints2 = widget.user.nbPoints >= 10;
+
     return Scaffold(
       bottomNavigationBar: CustomBottomNavigationBar(
         selectedIndex: widget.selectedIndex,
@@ -68,12 +77,12 @@ class _rewardsState extends State<rewards> {
                     width: 100,
                     height: 100,
                     margin: EdgeInsets.only(left: 20, right: 20),
-                    child: const CircleAvatar(
+                    child: CircleAvatar(
                       radius: 50,
                       backgroundColor: Colors.grey,
                       foregroundColor: Colors.grey,
                       backgroundImage:
-                      AssetImage('assets/images/profilePicture/firstIcon.png'),
+                      AssetImage(widget.user.image),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -88,29 +97,49 @@ class _rewardsState extends State<rewards> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
+                      GestureDetector(
+                      child: Container(
                         width: 100,
                         height: 100,
                         margin: EdgeInsets.only(left: 20),
-                        child: const CircleAvatar(
+                        child: CircleAvatar(
                           radius: 25,
-                          backgroundColor: Colors.grey,
-                          foregroundColor: Colors.grey,
-                          backgroundImage:
-                          AssetImage('assets/images/profilePicture/firstIcon.png'),
+                          backgroundColor: hasEnoughPoints1 ? Colors.green : Colors.red,
+                          backgroundImage: const AssetImage(
+                              'assets/images/profilePicture/secondIcon.png'),
                         ),
                       ),
-                      Container(
+                      onTap: () {
+                        if (hasEnoughPoints1) {
+                          setState(() {
+                            widget.user.image = 'assets/images/profilePicture/secondIcon.png';
+                            widget.db.updateImage(widget.user, 'assets/images/profilePicture/secondIcon.png');
+                            reloadPage();
+                          });
+                        }
+                      },
+                      ),
+                      GestureDetector(
+                      child: Container(
                         width: 100,
                         height: 100,
-                        margin: EdgeInsets.only(right: 20),
-                        child: const CircleAvatar(
+                        margin: const EdgeInsets.only(right: 20),
+                        child: CircleAvatar(
                           radius: 25,
-                          backgroundColor: Colors.grey,
-                          foregroundColor: Colors.grey,
-                          backgroundImage:
-                          AssetImage('assets/images/profilePicture/firstIcon.png'),
+                          backgroundColor: hasEnoughPoints2 ? Colors.green : Colors.red,
+                          backgroundImage: const AssetImage(
+                              'assets/images/profilePicture/thirdIcon.png'),
                         ),
+                      ),
+                        onTap: () {
+                          if (hasEnoughPoints2) {
+                            setState(() {
+                              widget.user.image = 'assets/images/profilePicture/thirdIcon.png';
+                              widget.db.updateImage(widget.user, 'assets/images/profilePicture/thirdIcon.png');
+                              reloadPage();
+                            });
+                          }
+                        },
                       ),
                     ],
                   ),

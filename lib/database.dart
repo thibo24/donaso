@@ -33,7 +33,6 @@ class Database {
     if (collection == null) {
       await db.createCollection(collectionName);
     }
-    //Pas besoin d'id, celui-ci est généré automatiquement
     await collection.insertOne({"name": params, "id": 10});
     print(await collection.find().toList());
   }
@@ -51,7 +50,7 @@ class Database {
       'firstName': firstName,
       'lastName': lastName,
       'phoneNumber': phone,
-      'image': '',
+      'image': 'assets/images/profilePicture/firstIcon.png',
       'points': 0,
     };
 
@@ -139,7 +138,7 @@ class Database {
     if (user == null) {
       throw Exception('User not found');
     }
-    return User(username: user['username'] ,email: user['email'].toString(), nbPoints: user['points'], firstName: user['username'].toString(), lastName: user['lastname'].toString());
+    return User(username: user['username'] ,email: user['email'].toString(), nbPoints: user['points'],  image: user['image']);
   }
 
   Future<List<Map<String, dynamic>>> findLocationsNearby(
@@ -245,11 +244,20 @@ class Database {
       if (user.email != null) {
         updateBuilder.set('email', user.email);
       }
-      if (user.firstName != null) {
-        updateBuilder.set('firstName', user.firstName);
-      }
-      if (user.lastName != null) {
-        updateBuilder.set('lastName', user.lastName);
+      await collection.update(where.eq('username', user.username), updateBuilder);
+    }
+  }
+
+  /// @param user
+  /// @param image
+  /// Update account image
+  Future<void> updateImage(User user, String image) async {
+    var collection = db.collection(userTable);
+    var dbUser = await collection.findOne(where.eq('username', user.username));
+    if (dbUser != null) {
+      var updateBuilder = modify;
+      if (user.image != null) {
+        updateBuilder.set('image', image);
       }
       await collection.update(where.eq('username', user.username), updateBuilder);
     }
@@ -264,7 +272,6 @@ class Database {
     updateBuilder.set('points', nbPoints+user.nbPoints);
     await collection.update(where.eq('username', user.username), updateBuilder);
   }
-
 
 }
 

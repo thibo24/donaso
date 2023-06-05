@@ -28,28 +28,20 @@ class _editProfileState extends State<editProfile> {
     super.initState();
     _field1Controller.text = widget.user.username;
     _field2Controller.text = widget.user.email;
-    _field3Controller.text = widget.user.firstName;
-    _field4Controller.text = widget.user.lastName;
   }
 
   @override
   void dispose() {
     _field1Controller.dispose();
     _field2Controller.dispose();
-    _field3Controller.dispose();
-    _field4Controller.dispose();
     super.dispose();
   }
 
   void _saveChanges() {
     String newFieldValue1 = _field1Controller.text;
     String newFieldValue2 = _field2Controller.text;
-    String newFieldValue3 = _field3Controller.text;
-    String newFieldValue4 = _field4Controller.text;
     widget.user.username = newFieldValue1;
     widget.user.email = newFieldValue2;
-    widget.user.firstName = newFieldValue3;
-    widget.user.lastName = newFieldValue4;
     widget.db.updateAccount(widget.user);
     navigateToProfile();
   }
@@ -120,19 +112,6 @@ class _editProfileState extends State<editProfile> {
                       labelText: 'Email',
                     ),
                   ),
-                  TextFormField(
-                    controller: _field3Controller,
-                    decoration: const InputDecoration(
-                      labelText: 'Firstname',
-                    ),
-                  ),
-                  TextFormField(
-                    controller: _field4Controller,
-                    decoration: const InputDecoration(
-                      labelText: 'Lastname',
-                    ),
-                  ),
-
                   const SizedBox(height: 16.0),
                   ElevatedButton(
                     child: Text('Save changes'),
