@@ -27,7 +27,6 @@ class Database {
     return collection.find().toList();
   }
 
-
   Future<void> writeCollection(String collectionName, String params) async {
     var collection = db.collection(collectionName);
     if (collection == null) {
@@ -40,7 +39,7 @@ class Database {
 
   /// Add an user to the database
   Future<void> addUser(String username, String password, String email,
-      String firstName, String lastName, String phone, String? image) async {
+      String phone, String? image) async {
     final collection = db.collection(userTable);
     String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
     final newUser = {
@@ -48,8 +47,6 @@ class Database {
       'username': username,
       'password': hashedPassword,
       'email': email,
-      'firstName': firstName,
-      'lastName': lastName,
       'phoneNumber': phone,
       'image': '',
       'points': 0,
@@ -67,13 +64,11 @@ class Database {
       final category = Categorie(
           name: categoryDocument['name'],
           image: categoryDocument['imageLink'],
-          description: categoryDocument['description']
-      );
+          description: categoryDocument['description']);
       return category;
     }
     throw Exception('Category not found');
   }
-
 
   Future<List<Categorie>> createCategories() async {
     final collection = db.collection('category');
@@ -101,15 +96,13 @@ class Database {
     }
   }
 
-
-
-  Future<List<Map<String, dynamic>>> selectSQL(String collectionName,
-      String key, String value) {
+  Future<List<Map<String, dynamic>>> selectSQL(
+      String collectionName, String key, String value) {
     var collection = db.collection(collectionName);
     return collection.find(where.eq(key, value)).toList();
   }
 
-  Future<bool> checkUserIsAvailable(String username) async {
+  Future<bool> checkUserNameIsAvailable(String username) async {
     var collection = db.collection(userTable);
     var user = await collection.findOne(where.eq('username', username));
     if (user == null) {
@@ -118,8 +111,18 @@ class Database {
     return false;
   }
 
+  Future<bool> checkUserEmailIsAvailable(String email) async {
+    var collection = db.collection(emailTable);
+    var user = await collection.findOne(where.eq('email', email));
+    if (user == null) {
+      return true;
+    }
+    return false;
+  }
+
   Future<bool> checkUser(String user, String password) async {
-    List<Map<String, dynamic>> map = await selectSQL("user", "username", user);
+    List<Map<String, dynamic>> map =
+        await selectSQL(userTable, "username", user);
     bool isUserValid = false;
 
     if (map.isNotEmpty) {
@@ -139,7 +142,10 @@ class Database {
     if (user == null) {
       throw Exception('User not found');
     }
-    return User(username: user['username'] ,email: user['email'].toString(), nbPoints: user['points'], firstName: user['username'].toString(), lastName: user['lastname'].toString());
+    return User(
+        username: user['username'],
+        email: user['email'].toString(),
+        nbPoints: user['points']);
   }
 
   Future<List<Map<String, dynamic>>> findLocationsNearby(
@@ -191,16 +197,13 @@ class Database {
     await collection.createIndex(keys: {'coordinates': '2dsphere'});
   }
 
-  Future<void> addUserGoogle(
-      String email, String firstName, String lastName, String username) async {
+  Future<void> addUserGoogle(String email, String username) async {
     final collection = db.collection(userTable);
     final newUser = {
       '_id': ObjectId(),
-      'username': firstName,
+      'username': username,
       'password': '',
       'email': email,
-      'firstName': firstName,
-      'lastName': lastName,
       'phoneNumber': '',
       'image': null,
       'points': 0,
@@ -209,9 +212,9 @@ class Database {
     await collection.insert(newUser);
   }
 
-  Future<bool> checkUserGoogle(String firstName) async{
+  Future<bool> checkUserGoogle(String email) async {
     var collection = db.collection(userTable);
-    var user = await collection.findOne(where.eq('username', firstName));
+    var user = await collection.findOne(where.eq('email', email));
     print(user.toString());
     if (user != null) {
       return true;
@@ -245,13 +248,8 @@ class Database {
       if (user.email != null) {
         updateBuilder.set('email', user.email);
       }
-      if (user.firstName != null) {
-        updateBuilder.set('firstName', user.firstName);
-      }
-      if (user.lastName != null) {
-        updateBuilder.set('lastName', user.lastName);
-      }
-      await collection.update(where.eq('username', user.username), updateBuilder);
+      await collection.update(
+          where.eq('username', user.username), updateBuilder);
     }
   }
 
@@ -261,10 +259,7 @@ class Database {
   Future<void> addPoints(User user, int nbPoints) async {
     var collection = db.collection(userTable);
     var updateBuilder = modify;
-    updateBuilder.set('points', nbPoints+user.nbPoints);
+    updateBuilder.set('points', nbPoints + user.nbPoints);
     await collection.update(where.eq('username', user.username), updateBuilder);
   }
-
-
 }
-

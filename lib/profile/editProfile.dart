@@ -11,7 +11,11 @@ class editProfile extends StatefulWidget {
   final int selectedIndex;
   final Function(int) onItemSelected;
 
-  editProfile({required this.user, required this.db, required this.selectedIndex, required this.onItemSelected});
+  editProfile(
+      {required this.user,
+      required this.db,
+      required this.selectedIndex,
+      required this.onItemSelected});
 
   @override
   _editProfileState createState() => _editProfileState();
@@ -28,8 +32,6 @@ class _editProfileState extends State<editProfile> {
     super.initState();
     _field1Controller.text = widget.user.username;
     _field2Controller.text = widget.user.email;
-    _field3Controller.text = widget.user.firstName;
-    _field4Controller.text = widget.user.lastName;
   }
 
   @override
@@ -48,17 +50,17 @@ class _editProfileState extends State<editProfile> {
     String newFieldValue4 = _field4Controller.text;
     widget.user.username = newFieldValue1;
     widget.user.email = newFieldValue2;
-    widget.user.firstName = newFieldValue3;
-    widget.user.lastName = newFieldValue4;
     widget.db.updateAccount(widget.user);
     navigateToProfile();
   }
 
   void navigateToProfile() {
-    final loginMenu = profileActivity(database: widget.db,
+    final loginMenu = profileActivity(
+      database: widget.db,
       selectedIndex: widget.selectedIndex,
       onPageSelected: widget.onItemSelected,
-      user: widget.user,);
+      user: widget.user,
+    );
     Navigator.push(context, MaterialPageRoute(builder: (context) => loginMenu));
   }
 
@@ -84,13 +86,12 @@ class _editProfileState extends State<editProfile> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            profileActivity(
-                              user: widget.user,
-                              database: widget.db,
-                              selectedIndex: widget.selectedIndex,
-                              onPageSelected: widget.onItemSelected,
-                            ),
+                        builder: (context) => profileActivity(
+                          user: widget.user,
+                          database: widget.db,
+                          selectedIndex: widget.selectedIndex,
+                          onPageSelected: widget.onItemSelected,
+                        ),
                       ),
                     );
                   },
@@ -120,19 +121,6 @@ class _editProfileState extends State<editProfile> {
                       labelText: 'Email',
                     ),
                   ),
-                  TextFormField(
-                    controller: _field3Controller,
-                    decoration: const InputDecoration(
-                      labelText: 'Firstname',
-                    ),
-                  ),
-                  TextFormField(
-                    controller: _field4Controller,
-                    decoration: const InputDecoration(
-                      labelText: 'Lastname',
-                    ),
-                  ),
-
                   const SizedBox(height: 16.0),
                   ElevatedButton(
                     child: Text('Save changes'),

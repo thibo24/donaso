@@ -14,7 +14,13 @@ class Maps extends StatefulWidget {
   int selectedIndex;
   Function(int) onPageSelected;
 
-  Maps({Key? key, required this.user, required this.db, required this.selectedIndex, required this.onPageSelected}) : super(key: key);
+  Maps(
+      {Key? key,
+      required this.user,
+      required this.db,
+      required this.selectedIndex,
+      required this.onPageSelected})
+      : super(key: key);
 
   @override
   MapsState createState() => MapsState();
@@ -37,7 +43,6 @@ class MapsState extends State<Maps> {
   }
 
   BitmapDescriptor getMarkerIcon(String binType) {
-    print("type : $binType");
     if (binType == 'Type 1') {
       return recyclingBin ?? BitmapDescriptor.defaultMarker;
     } else if (binType == 'Type 2') {
@@ -96,7 +101,7 @@ class MapsState extends State<Maps> {
       print("Chargement de l'icône du marqueur");
       print(markers.length);
       final Uint8List markerBasicBin = await getBytesFromAsset(
-        'assets/images/chiengue.png',
+        'assets/images/recycling-bin-3.png',
         100,
       );
       final Uint8List markerRecycleBin = await getBytesFromAsset(

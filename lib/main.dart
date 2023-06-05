@@ -77,8 +77,8 @@ class _MyHomePageState extends State<MyHomePage> {
           User user = await widget.db.createUser(firstName);
           navigateToMainMenu(user);
         } else {
-          widget.db.addUserGoogle(email, firstName, lastName, fullName);
-          User user = await widget.db.createUser(firstName);
+          widget.db.addUserGoogle(email, fullName);
+          User user = await widget.db.createUser(fullName);
           navigateToMainMenu(user);
         }
       }
@@ -111,10 +111,8 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void navigateToMainMenu(User user){
-    final mainMenu = AppLoader(db: widget.db,
-        user: user
-    );
+  void navigateToMainMenu(User user) {
+    final mainMenu = AppLoader(db: widget.db, user: user);
     Navigator.push(context, MaterialPageRoute(builder: (context) => mainMenu));
   }
 
@@ -131,7 +129,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
   */
-
 
   @override
   void dispose() {
