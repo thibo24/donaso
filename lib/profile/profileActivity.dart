@@ -60,11 +60,11 @@ class _profileActivityState extends State<profileActivity> {
                   Container(
                     width: 100,
                     height: 100,
-                    child: const CircleAvatar(
+                    child: CircleAvatar(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.white30,
                       backgroundImage: AssetImage(
-                          'assets/images/profilePicture/firstIcon.png'),
+                          widget.user.image),
                     ),
                   ),
                   Column(children: [

@@ -32,7 +32,6 @@ class Database {
     if (collection == null) {
       await db.createCollection(collectionName);
     }
-    //Pas besoin d'id, celui-ci est généré automatiquement
     await collection.insertOne({"name": params, "id": 10});
     print(await collection.find().toList());
   }
@@ -48,7 +47,7 @@ class Database {
       'password': hashedPassword,
       'email': email,
       'phoneNumber': phone,
-      'image': '',
+      'image': 'assets/images/profilePicture/firstIcon.png',
       'points': 0,
     };
 
@@ -145,7 +144,8 @@ class Database {
     return User(
         username: user['username'],
         email: user['email'].toString(),
-        nbPoints: user['points']);
+        nbPoints: user['points'],
+        image: user['image']);
   }
 
   Future<List<Map<String, dynamic>>> findLocationsNearby(

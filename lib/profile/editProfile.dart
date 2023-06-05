@@ -38,16 +38,12 @@ class _editProfileState extends State<editProfile> {
   void dispose() {
     _field1Controller.dispose();
     _field2Controller.dispose();
-    _field3Controller.dispose();
-    _field4Controller.dispose();
     super.dispose();
   }
 
   void _saveChanges() {
     String newFieldValue1 = _field1Controller.text;
     String newFieldValue2 = _field2Controller.text;
-    String newFieldValue3 = _field3Controller.text;
-    String newFieldValue4 = _field4Controller.text;
     widget.user.username = newFieldValue1;
     widget.user.email = newFieldValue2;
     widget.db.updateAccount(widget.user);

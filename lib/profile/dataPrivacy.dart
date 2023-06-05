@@ -5,29 +5,12 @@ import '../database.dart';
 import '../navigationBar.dart';
 
 class dataPrivacy extends StatefulWidget {
-  final User user;
+  User user;
   final Database db;
   final int selectedIndex;
   final Function(int) onItemSelected;
-  late Future<String> _dataPrivacyFuture;
 
-  dataPrivacy({
-    required this.user,
-    required this.db,
-    required this.selectedIndex,
-    required this.onItemSelected,
-  }) {
-    _dataPrivacyFuture = _getDataPrivacy();
-  }
-
-  Future<String> _getDataPrivacy() async {
-    try {
-      return await db.getPrivacyConditions();
-    } catch (error) {
-      print('Failed to get privacy details: $error');
-      return Future.error('Failed to get privacy details');
-    }
-  }
+  dataPrivacy({required this.user, required this.db, required this.selectedIndex, required this.onItemSelected});
 
   @override
   _dataPrivacyState createState() => _dataPrivacyState();
@@ -42,27 +25,7 @@ class _dataPrivacyState extends State<dataPrivacy> {
         onItemSelected: widget.onItemSelected,
       ),
       backgroundColor: Colors.white,
-      body: FutureBuilder<String>(
-        future: widget._dataPrivacyFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: ElevatedButton(
-                onPressed: () async {
-                  setState(() {
-                    widget._dataPrivacyFuture = widget._getDataPrivacy();
-                  });
-                },
-                child: const Text('Failed to load categories. Retry'),
-              ),
-            );
-          } else {
-            final dataPrivacy = snapshot.data!;
-            return Container(
+      body: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
@@ -101,15 +64,11 @@ class _dataPrivacyState extends State<dataPrivacy> {
                     color: Colors.grey,
                     thickness: 1.5,
                   ),
-                  Expanded(
-                    child: Text(dataPrivacy),
+                  const Expanded(
+                    child: Text("Lorem ipsum dolor sit amet, consectetu adipiscing elit. Phasellus ultricies fermentum interdum. Nullam eu tellus in magna congue eleifend vel quis mi. Curabitur consectetur orci sed pharetra pellentesque. Aenean varius, quameu consectetur accumsan, magna urna volutpatdolor, nec rutrum orci tortor eu lectus. Curabiturquis tortor quis sapien venenatis vulputate at aerat. Nam a fringilla lacus, eu faucibus neque.Aliquam maximus, arcu et euismod ultrices, lacuspurus viverra quam, quis imperdiet magna erat utnisl. Aliquam a neque feugiat, vestibulum velitnec, molestie sapien."),
                   ),
                 ],
               ),
-            );
+            ));
           }
-        },
-      ),
-    );
-  }
 }
