@@ -5,6 +5,7 @@ import 'package:flutter_application_2/database.dart';
 import 'package:flutter_application_2/navigationBar.dart';
 import 'package:flutter_application_2/camera/borderPainter.dart';
 import 'package:image_picker/image_picker.dart';
+import '../profile/user.dart';
 import 'AI.dart';
 
 class CameraScreen extends StatefulWidget {
@@ -12,7 +13,8 @@ class CameraScreen extends StatefulWidget {
   final Database database;
   final int selectedIndex;
   final Function(int) onPageSelected;
-  CameraScreen({required this.camera, required this.database, required this.selectedIndex, required this.onPageSelected});
+  User user;
+  CameraScreen({required this.user, required this.camera, required this.database, required this.selectedIndex, required this.onPageSelected});
 
   @override
   _CameraScreenState createState() => _CameraScreenState();
@@ -75,6 +77,8 @@ class _CameraScreenState extends State<CameraScreen> {
 
   void _sendToAI() async {
     if (_imageFile != null) {
+      widget.user.nbPoints += 1;
+      widget.database.addPoints(widget.user, 1);
       await Navigator.push(
         context,
         MaterialPageRoute(

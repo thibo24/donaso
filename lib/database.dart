@@ -13,12 +13,14 @@ class Database {
 
   Database(Function() connect);
 
+  /// Connects to the database
   static Future<Database> connect() async {
     var db = await Db.create(MONGO_URL);
     await db.open();
     return Database._(db);
   }
 
+  /// Return everything in the collection
   Future<List<Map<String, dynamic>>> getAllFromCollection(
       String collectionName) async {
     var collection = db.collection(collectionName);
@@ -36,6 +38,7 @@ class Database {
     print(await collection.find().toList());
   }
 
+  /// Add an user to the database
   Future<void> addUser(String username, String password, String email,
       String firstName, String lastName, String phone, String? image) async {
     final collection = db.collection(userTable);
@@ -55,7 +58,8 @@ class Database {
     await collection.insert(newUser);
   }
 
-
+  /// Add a category to the database
+  /// @param name of the category
   Future<Categorie> createCategory(String name) async {
     final collection = db.collection('category');
     final categoryDocument = await collection.findOne(where.eq('name', name));
@@ -69,6 +73,7 @@ class Database {
     }
     throw Exception('Category not found');
   }
+
 
   Future<List<Categorie>> createCategories() async {
     final collection = db.collection('category');
@@ -213,6 +218,53 @@ class Database {
     }
     return false;
   }
+
+  /// @param username
+  /// Delete user by username if exists
+  Future<void> deleteAccount(String username) async {
+    var collection = db.collection(userTable);
+    var user = await collection.findOne(where.eq('username', username));
+    if (user != null) {
+      await collection.remove(where.eq('username', username));
+      print('Account deleted successfully.');
+    } else {
+      print('Account not found.');
+    }
+  }
+
+  /// @param user
+  /// Update account information according to a user object
+  Future<void> updateAccount(User user) async {
+    var collection = db.collection(userTable);
+    var dbUser = await collection.findOne(where.eq('username', user.username));
+    if (dbUser != null) {
+      var updateBuilder = modify;
+      if (user.username != null) {
+        updateBuilder.set('username', user.username);
+      }
+      if (user.email != null) {
+        updateBuilder.set('email', user.email);
+      }
+      if (user.firstName != null) {
+        updateBuilder.set('firstName', user.firstName);
+      }
+      if (user.lastName != null) {
+        updateBuilder.set('lastName', user.lastName);
+      }
+      await collection.update(where.eq('username', user.username), updateBuilder);
+    }
+  }
+
+  /// @param user
+  /// @param nbPoints
+  /// Update user points
+  Future<void> addPoints(User user, int nbPoints) async {
+    var collection = db.collection(userTable);
+    var updateBuilder = modify;
+    updateBuilder.set('points', nbPoints+user.nbPoints);
+    await collection.update(where.eq('username', user.username), updateBuilder);
+  }
+
 
 }
 

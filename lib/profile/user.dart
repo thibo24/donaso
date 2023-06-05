@@ -1,9 +1,9 @@
 class User {
-  final String email;
-  final int nbPoints;
-  final String firstName;
-  final String lastName;
-  final String username;
+   String email;
+    int nbPoints;
+   String firstName;
+   String lastName;
+  String username;
 
   User({
     required this.email,

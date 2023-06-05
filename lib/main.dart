@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'database.dart';
 
 void main() async {
-  //HttpOverrides.global = MyHttpOverrides();
+  HttpOverrides.global = MyHttpOverrides();
   Database data = await Database.connect();
   runApp(MyApp(db: data));
 }
@@ -63,25 +63,20 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _handleGoogleSignIn() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      print("1");
       if (googleUser != null) {
-        print("2");
         // Connexion réussie, récupérez les informations de l'utilisateur
         final String email = googleUser.email;
         final String? userid = googleUser.id;
 
         String fullName = googleUser.displayName ?? '';
         List<String> nameParts = fullName.split(' ');
-
         String firstName = nameParts.isNotEmpty ? nameParts.first : '';
         String lastName = nameParts.length > 1 ? nameParts.last : '';
 
         if (await widget.db.checkUserGoogle(firstName)) {
-          print("3");
           User user = await widget.db.createUser(firstName);
           navigateToMainMenu(user);
         } else {
-          print("4");
           widget.db.addUserGoogle(email, firstName, lastName, fullName);
           User user = await widget.db.createUser(firstName);
           navigateToMainMenu(user);
@@ -110,7 +105,6 @@ class _MyHomePageState extends State<MyHomePage> {
     String? username = prefs.getString('username');
     print(username);
     String? password = prefs.getString('password');
-    print(password);
     if (await widget.db.checkUser(username!, password!)) {
       User user = await widget.db.createUser(username);
       navigateToMainMenu(user);

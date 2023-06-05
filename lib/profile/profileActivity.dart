@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/profile/dataPrivacy.dart';
+import 'package:flutter_application_2/profile/rewards.dart';
 import 'package:flutter_application_2/profile/settings.dart';
 import 'package:flutter_application_2/profile/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,12 +8,15 @@ import 'package:social_share/social_share.dart';
 import '../database.dart';
 import '../main.dart';
 import '../navigationBar.dart';
+import 'editProfile.dart';
 
 class profileActivity extends StatefulWidget {
   late Database database;
   final int selectedIndex;
-  final Function(int) onPageSelected; // Callback function
+  final Function(int) onPageSelected;
   final User user;
+  String point = "";
+
   profileActivity(
       {required this.database,
       required this.selectedIndex,
@@ -25,6 +29,7 @@ class profileActivity extends StatefulWidget {
 
 
 class _profileActivityState extends State<profileActivity> {
+
 
   Future<void> clearSharedPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -93,7 +98,12 @@ class _profileActivityState extends State<profileActivity> {
                           color: Colors.green,
                         ),
                       ),
-                      // onTap: () => redirect to reward page
+                      onTap: () => {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => rewards(user: widget.user, db: widget.database, selectedIndex: widget.selectedIndex, onItemSelected: widget.onPageSelected)),
+                        )
+                      },
                     ),
                     const Divider(
                       color: Colors.grey, // Couleur de la démarcation
@@ -151,7 +161,12 @@ class _profileActivityState extends State<profileActivity> {
                           color: Colors.grey,
                         ),
                       ),
-                      // onTap: () => redirect to edit profile
+                      onTap: () {
+                        Navigator.push(
+                           context,
+                           MaterialPageRoute(builder: (context) => editProfile(user: widget.user, db: widget.database, selectedIndex: widget.selectedIndex, onItemSelected: widget.onPageSelected)),
+                         );
+                      }
                     ),
                     const Divider(
                       color: Colors.grey, // Couleur de la démarcation

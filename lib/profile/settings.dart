@@ -25,6 +25,49 @@ class settings extends StatefulWidget {
 }
 
 class _settingsState extends State<settings> {
+
+  Future<void> clearSharedPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+  }
+
+  void navigateToLogin(){
+    final loginMenu = MyApp(db: widget.db);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => loginMenu));
+  }
+
+  Future<void> deleteAccount(String username, BuildContext context) async {
+    var confirmed = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirmation'),
+          content: Text('Voulez-vous vraiment supprimer votre compte ?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Non'),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+            TextButton(
+              child: Text('Oui'),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed == true) {
+      widget.db.deleteAccount(widget.user.username);
+      clearSharedPreferences();
+      navigateToLogin();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,6 +148,7 @@ class _settingsState extends State<settings> {
                       ),
                       trailing: Icon(Icons.dangerous),
                       onTap: () {
+                          deleteAccount(widget.user.username, context);
                       },
                     ),
                   ),

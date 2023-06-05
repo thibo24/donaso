@@ -57,6 +57,7 @@ class _AppLoaderState extends State<AppLoader> {
                 primarySwatch: Colors.blue,
               ),
               home: CameraScreen(
+                user: widget.user,
                 camera: cameras[0],
                 database: database,
                 selectedIndex: selectedIndex,
