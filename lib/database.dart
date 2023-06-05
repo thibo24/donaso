@@ -1,8 +1,9 @@
 import 'package:donaso/constant.dart';
+import 'package:donaso/dataInterface.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:bcrypt/bcrypt.dart';
 
-class Database {
+class Database implements DataInterface {
   late final Db db;
 
   Database._(this.db);

@@ -88,9 +88,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void saveAccount() {
-    print("save account called");
-    print(loginController.text);
-    print(passwordController.text);
     SharedPreferences.getInstance().then((prefs) {
       prefs.setString("username", loginController.text);
       prefs.setString("password", passwordController.text);
@@ -98,13 +95,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void isSavedAccount() async {
-    print("is saved account called");
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? username = prefs.getString('username');
-    print(username);
     String? password = prefs.getString('password');
-    print(password);
     if (await widget.db.checkUser(username!, password!)) {
       navigateToMaps(username);
     }

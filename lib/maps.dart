@@ -46,11 +46,8 @@ class MapsState extends State<Maps> {
   Future<void> getMarkers() async {
     if (position == null) return;
 
-    var collection = await widget.db.findLocationsNearby(
-      position!.longitude,
-      position!.latitude,
-      maxDistance,
-    );
+    var collection = await widget.db.findLocationsNearbyByType(
+        position!.longitude, position!.latitude, "Type 1");
     setState(() {
       markers.clear();
       for (var location in collection) {
