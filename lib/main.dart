@@ -115,21 +115,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final mainMenu = AppLoader(db: widget.db, user: user);
     Navigator.push(context, MaterialPageRoute(builder: (context) => mainMenu));
   }
-
-  /*
-  void navigateToMaps(String fullName) {
-    final mapsPage = Maps(
-      username: fullName,
-      db: widget.db,
-    );
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => mapsPage),
-    );
-  }
-  */
-
+  
   @override
   void dispose() {
     loginController.dispose();

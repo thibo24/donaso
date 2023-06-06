@@ -72,6 +72,7 @@ class _settingsState extends State<settings> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: CustomBottomNavigationBar(
+        user: widget.user,
         selectedIndex: widget.selectedIndex,
         onItemSelected: widget.onItemSelected,
       ),

@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import '../profile/user.dart';
 import 'category.dart';
 import '../database.dart';
 import '../navigationBar.dart';
 
 class categoryDetail extends StatefulWidget {
   final Categorie categorie;
+  User user;
   final Database db;
   final int selectedIndex;
   final Function(int) onItemSelected;
 
-  categoryDetail({Key? key, required this.categorie, required this.db, required this.selectedIndex, required this.onItemSelected}) : super(key: key);
+  categoryDetail({Key? key, required this.categorie, required this.db, required this.selectedIndex, required this.onItemSelected, required this.user}) : super(key: key);
 
   @override
   _categoryDetailState createState() => _categoryDetailState();
@@ -21,8 +23,9 @@ class _categoryDetailState extends State<categoryDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
         bottomNavigationBar: CustomBottomNavigationBar(
+
           selectedIndex: widget.selectedIndex,
-          onItemSelected: widget.onItemSelected,
+          onItemSelected: widget.onItemSelected, user: widget.user,
         ),
         backgroundColor: Colors.white,
         body: Container(

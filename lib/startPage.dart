@@ -87,6 +87,7 @@ class _AppLoaderState extends State<AppLoader> {
                 primarySwatch: Colors.blue,
               ),
               home: AllScreen(
+                user: widget.user,
                 database: database,
                 selectedIndex: selectedIndex,
                 onPageSelected: onPageSelected, // Pass the callback function

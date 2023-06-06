@@ -42,6 +42,7 @@ class _profileActivityState extends State<profileActivity> {
   Widget build(BuildContext context) {
     return Scaffold(
         bottomNavigationBar: CustomBottomNavigationBar(
+          user: widget.user,
           selectedIndex: widget.selectedIndex,
           onItemSelected: widget.onPageSelected,
         ),
