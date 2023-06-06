@@ -34,7 +34,7 @@ class _profileActivityState extends State<profileActivity> {
   }
 
   void navigateToLogin() {
-    final loginMenu = MyApp(db: widget.database);
+    final loginMenu = MyApp();
     Navigator.push(context, MaterialPageRoute(builder: (context) => loginMenu));
   }
 

@@ -32,7 +32,7 @@ class _settingsState extends State<settings> {
   }
 
   void navigateToLogin(){
-    final loginMenu = MyApp(db: widget.db);
+    final loginMenu = MyApp();
     Navigator.push(context, MaterialPageRoute(builder: (context) => loginMenu));
   }
 
