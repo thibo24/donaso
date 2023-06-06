@@ -254,6 +254,20 @@ class Database {
   }
 
   /// @param user
+  /// @param image
+  /// Update account image
+  Future<void> updateImage(User user, String image) async {
+    var collection = db.collection(userTable);
+    var dbUser = await collection.findOne(where.eq('username', user.username));
+    if (dbUser != null) {
+      var updateBuilder = modify;
+        updateBuilder.set('image', image);
+      await collection.update(
+          where.eq('username', user.username), updateBuilder);
+    }
+  }
+
+  /// @param user
   /// @param nbPoints
   /// Update user points
   Future<void> addPoints(User user, int nbPoints) async {
