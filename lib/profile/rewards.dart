@@ -12,10 +12,10 @@ class rewards extends StatefulWidget {
 
   rewards(
       {Key? key,
-      required this.user,
-      required this.db,
-      required this.selectedIndex,
-      required this.onItemSelected})
+        required this.user,
+        required this.db,
+        required this.selectedIndex,
+        required this.onItemSelected})
       : super(key: key);
 
   @override
@@ -36,8 +36,13 @@ class _rewardsState extends State<rewards> {
   Widget build(BuildContext context) {
     bool hasEnoughPoints1 = widget.user.nbPoints >= 0;
     bool hasEnoughPoints2 = widget.user.nbPoints >= 5;
-    bool hasEnoughPoints3 = widget.user.nbPoints >= 10;
-    bool hasEnoughPoints4 = widget.user.nbPoints >= 15;
+    bool hasEnoughPoints3 = widget.user.nbPoints >= 20;
+    bool hasEnoughPoints4 = widget.user.nbPoints >= 50;
+
+    double remainingPoints1 = hasEnoughPoints1 ? 0 : 1 - (widget.user.nbPoints / 5);
+    double remainingPoints2 = hasEnoughPoints2 ? 0 : 1 - (widget.user.nbPoints / 20);
+    double remainingPoints3 = hasEnoughPoints3 ? 0 : 1 - (widget.user.nbPoints / 50);
+    double remainingPoints4 = hasEnoughPoints4 ? 0 : 1 - (widget.user.nbPoints / 100);
 
     return Scaffold(
       bottomNavigationBar: CustomBottomNavigationBar(
@@ -84,7 +89,7 @@ class _rewardsState extends State<rewards> {
                     height: 100,
                     margin: EdgeInsets.only(left: 20, right: 20),
                     child: Image(
-                      image: AssetImage(widget.user.image),
+                      image: AssetImage("assets/images/profilePicture/"+widget.user.image),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -107,43 +112,50 @@ class _rewardsState extends State<rewards> {
                             child: CircleAvatar(
                               radius: 25,
                               backgroundColor:
-                                  hasEnoughPoints1 ? Colors.green : Colors.red,
-                              backgroundImage: const AssetImage(
-                                  'assets/images/profilePicture/firstIcon.png'),
+                              hasEnoughPoints1 ? Colors.green : Colors.red,
+                              child: Image(
+                                image: AssetImage(
+                                  'assets/images/profilePicture/default.png',
+                                ),
+                              ),
                             ),
                           ),
                           onTap: () {
                             if (hasEnoughPoints1) {
                               setState(() {
                                 widget.user.image =
-                                    'assets/images/profilePicture/firstIcon.png';
+                                'default.png';
                                 widget.db.updateImage(widget.user,
-                                    'assets/images/profilePicture/firstIcon.png');
+                                    'default.png');
                                 reloadPage();
                               });
                             }
                           },
                         ),
                         GestureDetector(
-                          child: Container(
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
                             width: 100,
                             height: 100,
                             margin: const EdgeInsets.only(right: 20),
                             child: CircleAvatar(
-                              radius: 25,
+                              radius: remainingPoints2 * 50,
                               backgroundColor:
-                                  hasEnoughPoints2 ? Colors.green : Colors.red,
-                              backgroundImage: const AssetImage(
-                                  'assets/images/profilePicture/secondIcon.png'),
+                              hasEnoughPoints2 ? Colors.green : Colors.red,
+                              child: Image(
+                                image: AssetImage(
+                                  'assets/images/profilePicture/bronze.png',
+                                ),
+                              ),
                             ),
                           ),
                           onTap: () {
                             if (hasEnoughPoints2) {
                               setState(() {
                                 widget.user.image =
-                                    'assets/images/profilePicture/secondIcon.png';
+                                'bronze.png';
                                 widget.db.updateImage(widget.user,
-                                    'assets/images/profilePicture/secondIcon.png');
+                                    'bronze.png');
                                 reloadPage();
                               });
                             }
@@ -155,50 +167,58 @@ class _rewardsState extends State<rewards> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       GestureDetector(
-                        child: Container(
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
                           width: 100,
                           height: 100,
-                          margin: EdgeInsets.only(left: 20),
+                          margin: const EdgeInsets.only(left: 20),
                           child: CircleAvatar(
-                            radius: 25,
+                            radius: remainingPoints3 * 50,
                             backgroundColor:
-                                hasEnoughPoints3 ? Colors.green : Colors.red,
-                            backgroundImage: const AssetImage(
-                                'assets/images/profilePicture/thirdIcon.png'),
+                            hasEnoughPoints3 ? Colors.green : Colors.red,
+                            child: Image(
+                              image: AssetImage(
+                                'assets/images/profilePicture/silver.png',
+                              ),
+                            ),
                           ),
                         ),
                         onTap: () {
                           if (hasEnoughPoints3) {
                             setState(() {
                               widget.user.image =
-                                  'assets/images/profilePicture/thirdIcon.png';
+                              'silver.png';
                               widget.db.updateImage(widget.user,
-                                  'assets/images/profilePicture/thirdIcon.png');
+                                  'silver.png');
                               reloadPage();
                             });
                           }
                         },
                       ),
                       GestureDetector(
-                        child: Container(
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
                           width: 100,
                           height: 100,
                           margin: const EdgeInsets.only(right: 20),
                           child: CircleAvatar(
-                            radius: 25,
+                            radius: hasEnoughPoints4 ? 25 : remainingPoints4 * 50,
                             backgroundColor:
-                                hasEnoughPoints4 ? Colors.green : Colors.red,
-                            backgroundImage: const AssetImage(
-                                'assets/images/profilePicture/fourthIcon.png'),
+                            hasEnoughPoints4 ? Colors.green : Colors.red,
+                            child: const Image(
+                              image: AssetImage(
+                                'assets/images/profilePicture/gold.png',
+                              ),
+                            ),
                           ),
                         ),
                         onTap: () {
                           if (hasEnoughPoints4) {
                             setState(() {
                               widget.user.image =
-                                  'assets/images/profilePicture/fourthIcon.png';
+                              'gold.png';
                               widget.db.updateImage(widget.user,
-                                  'assets/images/profilePicture/fourthIcon.png');
+                                  'gold.png');
                               reloadPage();
                             });
                           }

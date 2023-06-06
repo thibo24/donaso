@@ -46,8 +46,8 @@ class Database {
       'username': username,
       'password': hashedPassword,
       'email': email,
-      'phoneNumber': phone,
-      'image': 'assets/images/profilePicture/firstIcon.png',
+      'phone': phone,
+      'image': 'default.png',
       'points': 0,
     };
 
@@ -194,8 +194,8 @@ class Database {
       'username': username,
       'password': '',
       'email': email,
-      'phoneNumber': '',
-      'image': null,
+      'phone': '',
+      'image': "default.png",
       'points': 0,
     };
 

@@ -65,7 +65,7 @@ class _profileActivityState extends State<profileActivity> {
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.white30,
                       backgroundImage: AssetImage(
-                          widget.user.image),
+                          "assets/images/profilePicture/"+widget.user.image),
                     ),
                   ),
                   Column(children: [

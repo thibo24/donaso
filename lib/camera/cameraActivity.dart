@@ -133,7 +133,7 @@ class _CameraScreenState extends State<CameraScreen> {
             top: MediaQuery.of(context).size.height * 0.1, // Ajustez cette valeur selon vos besoins
             left: 16,
             child: Visibility(
-              visible: _isButtonVisible,
+              visible: _imageFile == null,
               child: FloatingActionButton(
                 backgroundColor: Colors.black,
                 onPressed: () {
