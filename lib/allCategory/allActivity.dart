@@ -94,8 +94,8 @@ class _CameraScreenState extends State<AllScreen> {
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              Image.network(
-                                category.image,
+                              Image.asset(
+                                'assets/images/categoryPicture/'+category.image,
                                 width: 100,
                                 height: 100,
                               ),

@@ -49,8 +49,8 @@ class _categoryDetailState extends State<categoryDetail> {
                           width: 120.0,
                           decoration: BoxDecoration(
                             image: DecorationImage(
-                              image: NetworkImage(
-                                  widget.categorie.image),
+                              image: AssetImage(
+                                  'assets/images/categoryPicture/'+widget.categorie.image),
                               fit: BoxFit.fill,
                             ),
                             shape: BoxShape.rectangle,
