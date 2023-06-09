@@ -171,6 +171,7 @@ class MapsState extends State<Maps> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: CustomBottomNavigationBar(
+        user: widget.user,
         selectedIndex: widget.selectedIndex,
         onItemSelected: widget.onPageSelected,
       ),

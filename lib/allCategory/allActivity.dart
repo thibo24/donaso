@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/allCategory/categoryDetail.dart';
+import '../profile/user.dart';
 import 'category.dart';
 import '../database.dart';
 import '../navigationBar.dart';
@@ -9,11 +10,13 @@ class AllScreen extends StatefulWidget {
   final int selectedIndex;
   final Function(int) onPageSelected; // Callback function
   late Future<List<Categorie>> _categorieFuture;
+  User user;
 
   AllScreen({
     required this.database,
     required this.selectedIndex,
     required this.onPageSelected,
+    required this.user
   }) {
     _categorieFuture = _createCategories();
   }
@@ -36,6 +39,7 @@ class _CameraScreenState extends State<AllScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: CustomBottomNavigationBar(
+        user: widget.user,
         selectedIndex: widget.selectedIndex,
         onItemSelected: widget.onPageSelected,
       ),
@@ -69,6 +73,7 @@ class _CameraScreenState extends State<AllScreen> {
                     Navigator.of(context).push(MaterialPageRoute(
                       builder: (BuildContext context) {
                         return categoryDetail(
+                          user: widget.user,
                           categorie: category,
                           db: widget.database,
                           selectedIndex: widget.selectedIndex,
@@ -94,8 +99,8 @@ class _CameraScreenState extends State<AllScreen> {
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              Image.network(
-                                category.image,
+                              Image.asset(
+                                'assets/images/categoryPicture/'+category.image,
                                 width: 100,
                                 height: 100,
                               ),

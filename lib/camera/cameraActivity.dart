@@ -82,7 +82,7 @@ class _CameraScreenState extends State<CameraScreen> {
       await Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => TfliteModel(image: _imageFile!, db: widget.database, selectedItem: widget.selectedIndex, onItemSelected: widget.onPageSelected),
+          builder: (context) => TfliteModel(user: widget.user,image: _imageFile!, db: widget.database, selectedItem: widget.selectedIndex, onItemSelected: widget.onPageSelected),
         ),
       );
 
@@ -109,7 +109,7 @@ class _CameraScreenState extends State<CameraScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: widget.selectedIndex, onItemSelected: widget.onPageSelected),
+      bottomNavigationBar: CustomBottomNavigationBar(user: widget.user, selectedIndex: widget.selectedIndex, onItemSelected: widget.onPageSelected),
       body:
       Stack(
         children: [
@@ -133,7 +133,7 @@ class _CameraScreenState extends State<CameraScreen> {
             top: MediaQuery.of(context).size.height * 0.1, // Ajustez cette valeur selon vos besoins
             left: 16,
             child: Visibility(
-              visible: _isButtonVisible,
+              visible: _imageFile == null,
               child: FloatingActionButton(
                 backgroundColor: Colors.black,
                 onPressed: () {

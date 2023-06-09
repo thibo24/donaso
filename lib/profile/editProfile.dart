@@ -66,6 +66,7 @@ class _editProfileState extends State<editProfile> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       bottomNavigationBar: CustomBottomNavigationBar(
+        user: widget.user,
         selectedIndex: widget.selectedIndex,
         onItemSelected: widget.onItemSelected,
       ),

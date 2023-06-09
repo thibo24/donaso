@@ -21,6 +21,7 @@ class _dataPrivacyState extends State<dataPrivacy> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: CustomBottomNavigationBar(
+        user: widget.user,
         selectedIndex: widget.selectedIndex,
         onItemSelected: widget.onItemSelected,
       ),

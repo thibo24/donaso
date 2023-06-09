@@ -49,7 +49,6 @@ class _AppLoaderState extends State<AppLoader> {
           final database = widget
               .db; // Utilisez la variable widget.db au lieu de snapshot.data![1]
           final firstCamera = cameras.first;
-
           if (selectedIndex == 0) {
             return MaterialApp(
               debugShowCheckedModeBanner: false,
@@ -87,6 +86,7 @@ class _AppLoaderState extends State<AppLoader> {
                 primarySwatch: Colors.blue,
               ),
               home: AllScreen(
+                user: widget.user,
                 database: database,
                 selectedIndex: selectedIndex,
                 onPageSelected: onPageSelected, // Pass the callback function

@@ -47,7 +47,7 @@ class Database {
       'password': hashedPassword,
       'email': email,
       'phone': phone,
-      'image': 'firstIcon.png',
+      'image': 'default.png',
       'points': 0,
     };
 
@@ -57,12 +57,12 @@ class Database {
   /// Add a category to the database
   /// @param name of the category
   Future<Categorie> createCategory(String name) async {
-    final collection = db.collection('category');
+    final collection = db.collection('wastes');
     final categoryDocument = await collection.findOne(where.eq('name', name));
     if (categoryDocument != null) {
       final category = Categorie(
           name: categoryDocument['name'],
-          image: categoryDocument['imageLink'],
+          image: categoryDocument['image'],
           description: categoryDocument['description']);
       return category;
     }
@@ -70,29 +70,18 @@ class Database {
   }
 
   Future<List<Categorie>> createCategories() async {
-    final collection = db.collection('category');
+    final collection = db.collection('wastes');
     final categories = <Categorie>[];
     final categoryDocuments = await collection.find().toList();
     for (var categoryDocument in categoryDocuments) {
       final category = Categorie(
         name: categoryDocument['name'],
-        image: categoryDocument['imageLink'],
+        image: categoryDocument['image'],
         description: categoryDocument['description'],
       );
       categories.add(category);
     }
     return categories;
-  }
-
-  Future<String> getPrivacyConditions() async {
-    final collection = db.collection('privacyConditions');
-    final privacyCondition = await collection.findOne();
-    if (privacyCondition != null && privacyCondition.containsKey('text')) {
-      final text = privacyCondition['text'].toString();
-      return text;
-    } else {
-      return '';
-    }
   }
 
   Future<List<Map<String, dynamic>>> selectSQL(
@@ -204,7 +193,7 @@ class Database {
       'password': '',
       'email': email,
       'phone': '',
-      'image': null,
+      'image': "default.png",
       'points': 0,
     };
 

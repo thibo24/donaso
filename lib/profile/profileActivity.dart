@@ -34,7 +34,7 @@ class _profileActivityState extends State<profileActivity> {
   }
 
   void navigateToLogin() {
-    final loginMenu = MyApp(db: widget.database);
+    final loginMenu = MyApp();
     Navigator.push(context, MaterialPageRoute(builder: (context) => loginMenu));
   }
 
@@ -42,6 +42,7 @@ class _profileActivityState extends State<profileActivity> {
   Widget build(BuildContext context) {
     return Scaffold(
         bottomNavigationBar: CustomBottomNavigationBar(
+          user: widget.user,
           selectedIndex: widget.selectedIndex,
           onItemSelected: widget.onPageSelected,
         ),
@@ -64,7 +65,7 @@ class _profileActivityState extends State<profileActivity> {
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.white30,
                       backgroundImage: AssetImage(
-                          widget.user.image),
+                          "assets/images/profilePicture/"+widget.user.image),
                     ),
                   ),
                   Column(children: [

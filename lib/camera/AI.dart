@@ -8,18 +8,21 @@ import 'package:flutter_tflite/flutter_tflite.dart';
 import '../allCategory/category.dart';
 import '../database.dart';
 import '../navigationBar.dart';
+import '../profile/user.dart';
 
 class TfliteModel extends StatefulWidget {
   final File image;
   final Database db;
   final int selectedItem;
   final Function(int) onItemSelected;
+  User user;
 
   TfliteModel(
       {Key? key,
       required this.image,
       required this.db,
       required this.selectedItem,
+      required this.user,
       required this.onItemSelected})
       : super(key: key);
 
@@ -75,6 +78,7 @@ class _TfliteModelState extends State<TfliteModel> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: CustomBottomNavigationBar(
+        user: widget.user,
         selectedIndex: widget.selectedItem,
         onItemSelected: widget.onItemSelected,
       ),

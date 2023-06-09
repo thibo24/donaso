@@ -10,32 +10,7 @@ import 'database.dart';
 
 void main() async {
   HttpOverrides.global = MyHttpOverrides();
-  Database data = await Database.connect();
-
-  print("-----------------zizi-------------------------");
-  try {
-    // Provide the latitude, longitude, and maxDistance values
-    double latitude = 5.540932;
-    double longitude = 43.283085;
-    double maxDistance = 20000;
-
-    // Call the findLocationsNearby function
-    var locations = await data.findLocationsNearby(37.42, -122.08, maxDistance);
-    print(locations.length);
-    // Longitude
-    // Print the retrieved locations
-    for (var location in locations) {
-      var coordinates = location['coordinates']['coordinates'];
-      print('Latitude: ${coordinates[1]}');
-      print('Longitude: ${coordinates[0]}');
-      print('Description: ${location['description']}');
-      print('--------------');
-    }
-  } catch (e) {
-    print('Error: $e');
-  }
-  print("-----------------zizi-------------------------");
-  runApp(MyApp(db: data));
+  runApp(MyApp());
 }
 
 class MyHttpOverrides extends HttpOverrides {
@@ -48,22 +23,73 @@ class MyHttpOverrides extends HttpOverrides {
 }
 
 class MyApp extends StatelessWidget {
-  Database db;
-  MyApp({Key? key, required this.db}) : super(key: key);
+  final DatabaseLoader databaseLoader = DatabaseLoader();
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Login page',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(
-        title: 'Login page',
-        db: db,
-      ),
+    return FutureBuilder<void>(
+      future: databaseLoader.connect(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            home: Scaffold(
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      "assets/images/DoNaSo_logo.png",
+                      width: 100,
+                      height: 100,
+                    ),
+                    SizedBox(height: 20),
+                    CircularProgressIndicator(),
+                  ],
+                ),
+              ),
+            ),
+          );
+        } else {
+          if (snapshot.hasError) {
+            return const MaterialApp(
+              debugShowCheckedModeBanner: false,
+              home: Scaffold(
+                body: Center(
+                  child: Text('Erreur de connexion à la base de données.'),
+                ),
+              ),
+            );
+          } else {
+            final Database data = databaseLoader.db;
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              title: 'Login page',
+              theme: ThemeData(
+                primarySwatch: Colors.blue,
+              ),
+              home: MyHomePage(
+                title: 'Login page',
+                db: data,
+              ),
+            );
+          }
+        }
+      },
     );
+  }
+}
+
+class DatabaseLoader {
+  late Database db;
+
+  Future<void> connect() async {
+    try {
+      db = await Database.connect();
+    } catch (error) {
+      print('Erreur de connexion à la base de données : $error');
+      rethrow;
+    }
   }
 }
 
@@ -71,7 +97,7 @@ class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title, required this.db})
       : super(key: key);
   final String title;
-  Database db;
+  final Database db;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -81,21 +107,19 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController loginController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: ['email', 'profile'], // Définissez les scopes d'accès requis
+    scopes: ['email', 'profile'],
   );
 
   Future<void> _handleGoogleSignIn() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser != null) {
-        // Connexion réussie, récupérez les informations de l'utilisateur
         final String email = googleUser.email;
         final String? userid = googleUser.id;
 
         String fullName = googleUser.displayName ?? '';
         List<String> nameParts = fullName.split(' ');
         String firstName = nameParts.isNotEmpty ? nameParts.first : '';
-        String lastName = nameParts.length > 1 ? nameParts.last : '';
 
         if (await widget.db.checkUserGoogle(firstName)) {
           User user = await widget.db.createUser(firstName);
@@ -107,15 +131,11 @@ class _MyHomePageState extends State<MyHomePage> {
         }
       }
     } catch (error) {
-      // Gérez les erreurs de connexion
       print('Erreur de connexion avec Google : $error');
     }
   }
 
   void saveAccount() {
-    print("save account called");
-    print(loginController.text);
-    print(passwordController.text);
     SharedPreferences.getInstance().then((prefs) {
       prefs.setString("username", loginController.text);
       prefs.setString("password", passwordController.text);
@@ -123,11 +143,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void isSavedAccount() async {
-    print("is saved account called");
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? username = prefs.getString('username');
-    print(username);
     String? password = prefs.getString('password');
     if (await widget.db.checkUser(username!, password!)) {
       User user = await widget.db.createUser(username);
@@ -139,20 +156,6 @@ class _MyHomePageState extends State<MyHomePage> {
     final mainMenu = AppLoader(db: widget.db, user: user);
     Navigator.push(context, MaterialPageRoute(builder: (context) => mainMenu));
   }
-
-  /*
-  void navigateToMaps(String fullName) {
-    final mapsPage = Maps(
-      username: fullName,
-      db: widget.db,
-    );
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => mapsPage),
-    );
-  }
-  */
 
   @override
   void dispose() {
@@ -185,9 +188,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
