@@ -46,8 +46,8 @@ class Database {
       'username': username,
       'password': hashedPassword,
       'email': email,
-      'phoneNumber': phone,
-      'image': 'assets/images/profilePicture/firstIcon.png',
+      'phone': phone,
+      'image': 'firstIcon.png',
       'points': 0,
     };
 
@@ -149,11 +149,10 @@ class Database {
   }
 
   Future<List<Map<String, dynamic>>> findLocationsNearby(
-      double longitude, double latitude, double? maxDistance) async {
-    var collection = db.collection(locName);
-    maxDistance ??= 1000;
+      double latitude, double longitude, double? maxDistance) async {
+    var collection = db.collection("locations");
     var query = {
-      'location': {
+      'coordinates': {
         '\$near': {
           '\$geometry': {
             'type': 'Point',
@@ -168,9 +167,9 @@ class Database {
     return result.map((doc) => doc as Map<String, dynamic>).toList();
   }
 
-  Future<List<Map<String, dynamic>>> findLocationsNearbyByType(
-      double longitude, double latitude, String type) async {
-    var map = await findLocationsNearby(longitude, latitude, 10000);
+  Future<List<Map<String, dynamic>>> findLocationsNearbyByType(double longitude,
+      double latitude, double maxDistance, String type) async {
+    var map = await findLocationsNearby(latitude, longitude, maxDistance);
     var result = map.where((element) => element['type'] == type).toList();
     return result;
   }
@@ -180,7 +179,7 @@ class Database {
     final collection = db.collection(locName);
 
     final document = {
-      'location': {
+      'coordinates': {
         'type': 'Point',
         'coordinates': [longitude, latitude]
       },
@@ -192,7 +191,7 @@ class Database {
     await collection.insert(document);
   }
 
-  Future<void> location() async {
+  Future<void> locations() async {
     var collection = db.collection(locName);
     await collection.createIndex(keys: {'coordinates': '2dsphere'});
   }
@@ -204,7 +203,7 @@ class Database {
       'username': username,
       'password': '',
       'email': email,
-      'phoneNumber': '',
+      'phone': '',
       'image': null,
       'points': 0,
     };
@@ -261,7 +260,7 @@ class Database {
     var dbUser = await collection.findOne(where.eq('username', user.username));
     if (dbUser != null) {
       var updateBuilder = modify;
-        updateBuilder.set('image', image);
+      updateBuilder.set('image', image);
       await collection.update(
           where.eq('username', user.username), updateBuilder);
     }

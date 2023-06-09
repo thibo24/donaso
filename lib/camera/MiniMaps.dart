@@ -1,32 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_application_2/profile/user.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 import 'dart:ui' as ui;
-import 'database.dart';
-import 'navigationBar.dart';
+import '../database.dart';
 
-class Maps extends StatefulWidget {
-  User user;
+class MiniMaps extends StatefulWidget {
   Database db;
   int selectedIndex;
   Function(int) onPageSelected;
+  String binType;
 
-  Maps(
+  MiniMaps(
       {Key? key,
-      required this.user,
       required this.db,
       required this.selectedIndex,
-      required this.onPageSelected})
+      required this.onPageSelected,
+      required this.binType})
       : super(key: key);
 
   @override
-  MapsState createState() => MapsState();
+  MiniMapsState createState() => MiniMapsState();
 }
 
-class MapsState extends State<Maps> {
+class MiniMapsState extends State<MiniMaps> {
   late GoogleMapController mapController;
   final double maxDistance = 10000; // Distance maximale en mètres
   Position? position;
@@ -52,32 +50,46 @@ class MapsState extends State<Maps> {
     }
   }
 
-  //TODO pas les markers trouvé dans minimaps et erreur dans maps
   Future<void> getMarkers() async {
     if (position == null) return;
+    List<Map<String, dynamic>> collection;
+    String typeDeDechet = getBinType(widget.binType);
+    if (typeDeDechet == "Unknown type") {
+      collection = await widget.db.findLocationsNearby(
+          position!.longitude, position!.latitude, maxDistance);
+    } else {
+      collection = await widget.db.findLocationsNearbyByType(
+        position!.longitude,
+        position!.latitude,
+        maxDistance,
+        typeDeDechet,
+      );
+    }
 
-    var collection = await widget.db.findLocationsNearby(
-      position!.latitude,
-      position!.longitude,
-      maxDistance,
-    );
     setState(() {
       markers.clear();
       for (var location in collection) {
-        print("--------- on tits -------------");
-        print(location['coordinates']?['coordinates'].toString());
-        print("--------- on tits -------------");
+        print("check collection");
+        var coordinates = location['coordinates']['coordinates'];
+        print('Latitude: ${coordinates[1]}');
+        print('Longitude: ${coordinates[0]}');
+        print('Description: ${location['description']}');
+        print('--------------');
 
-        var coordinates = location['coordinates']?['coordinates'];
-        if (coordinates != null && coordinates.length >= 2) {
-          print("--------on hit --------");
-          print(coordinates[1]);
-          print(coordinates[0]);
-          print("--------on hit --------");
+        print("check if");
+        print(location.containsKey('coordinates'));
+        print(location['coordinates']?['coordinates'] != null);
+        print(location['coordinates']?['coordinates'].length >= 2);
+        print("end check if ");
+        if (location.containsKey('coordinates') &&
+            location['coordinates']?['coordinates'] != null &&
+            location['coordinates']?['coordinates'].length >= 2) {
+          print("on hit");
           markers.add(
             Marker(
               markerId: MarkerId(location['_id'].toString()),
-              position: LatLng(coordinates[1], coordinates[0]),
+              position: LatLng(location['coordinates']?['coordinates'][1],
+                  location['coordinates']?['coordinates'][0]),
               icon: getMarkerIcon(location['type'] ?? ''),
               infoWindow: InfoWindow(
                 title: location['name'] ?? '',
@@ -87,6 +99,7 @@ class MapsState extends State<Maps> {
           );
         }
       }
+      print(markers.length);
     });
   }
 
@@ -142,6 +155,28 @@ class MapsState extends State<Maps> {
         .asUint8List();
   }
 
+  String getBinType(String binName) {
+    switch (binName) {
+      case 'shoes':
+      case 'cardboard':
+      case 'paper':
+      case 'clothes':
+      case 'plastic':
+        return 'Recycling Bin';
+      case 'white-glass':
+      case 'brown-glass':
+      case 'green-glass':
+        return 'Glass Bin';
+      case 'metal':
+      case 'battery':
+      case 'biological':
+      case 'trash':
+        return 'Trash Bin';
+      default:
+        return 'Unknown Bin';
+    }
+  }
+
   Future<Position> getCurrentLocation() async {
     bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!isLocationServiceEnabled) {
@@ -169,12 +204,8 @@ class MapsState extends State<Maps> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: CustomBottomNavigationBar(
-        selectedIndex: widget.selectedIndex,
-        onItemSelected: widget.onPageSelected,
-      ),
-      body: FutureBuilder<Position>(
+    return Container(
+      child: FutureBuilder<Position>(
         future: getCurrentLocation(),
         builder: (BuildContext context, AsyncSnapshot<Position> snapshot) {
           if (snapshot.hasData) {
@@ -196,7 +227,8 @@ class MapsState extends State<Maps> {
           } else if (snapshot.hasError) {
             return Center(
               child: Text(
-                  'Impossible de récupérer la position actuelle: ${snapshot.error}'),
+                'Impossible de récupérer la position actuelle: ${snapshot.error}',
+              ),
             );
           } else {
             return const Center(

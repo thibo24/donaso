@@ -11,6 +11,30 @@ import 'database.dart';
 void main() async {
   HttpOverrides.global = MyHttpOverrides();
   Database data = await Database.connect();
+
+  print("-----------------zizi-------------------------");
+  try {
+    // Provide the latitude, longitude, and maxDistance values
+    double latitude = 5.540932;
+    double longitude = 43.283085;
+    double maxDistance = 20000;
+
+    // Call the findLocationsNearby function
+    var locations = await data.findLocationsNearby(37.42, -122.08, maxDistance);
+    print(locations.length);
+    // Longitude
+    // Print the retrieved locations
+    for (var location in locations) {
+      var coordinates = location['coordinates']['coordinates'];
+      print('Latitude: ${coordinates[1]}');
+      print('Longitude: ${coordinates[0]}');
+      print('Description: ${location['description']}');
+      print('--------------');
+    }
+  } catch (e) {
+    print('Error: $e');
+  }
+  print("-----------------zizi-------------------------");
   runApp(MyApp(db: data));
 }
 

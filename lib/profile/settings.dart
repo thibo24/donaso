@@ -115,6 +115,7 @@ class _settingsState extends State<settings> {
               color: Colors.grey,
               thickness: 1.5,
             ),
+            
             Expanded(
               child: ListView(
                 shrinkWrap: true,

@@ -68,6 +68,7 @@ class _profileActivityState extends State<profileActivity> {
                     ),
                   ),
                   Column(children: [
+                    
                     Text(
                       widget.user.username,
                       style: const TextStyle(fontSize: 20),
