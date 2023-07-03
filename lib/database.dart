@@ -70,7 +70,7 @@ class Database {
   }
 
   Future<List<Categorie>> createCategories() async {
-    final collection = db.collection('wastes');
+    final collection = db.collection("wastes");
     final categories = <Categorie>[];
     final categoryDocuments = await collection.find().toList();
     for (var categoryDocument in categoryDocuments) {
@@ -139,7 +139,7 @@ class Database {
 
   Future<List<Map<String, dynamic>>> findLocationsNearby(
       double latitude, double longitude, double? maxDistance) async {
-    var collection = db.collection("locations");
+    var collection = db.collection(locName);
     var query = {
       'coordinates': {
         '\$near': {

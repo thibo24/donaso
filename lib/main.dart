@@ -56,12 +56,13 @@ class MyApp extends StatelessWidget {
               debugShowCheckedModeBanner: false,
               home: Scaffold(
                 body: Center(
-                  child: Text('Erreur de connexion à la base de données.'),
+                  child: Text('Error can\'t connect with database.'),
                 ),
               ),
             );
           } else {
             final Database data = databaseLoader.db;
+
             return MaterialApp(
               debugShowCheckedModeBanner: false,
               title: 'Login page',
@@ -87,7 +88,7 @@ class DatabaseLoader {
     try {
       db = await Database.connect();
     } catch (error) {
-      print('Erreur de connexion à la base de données : $error');
+      print('Error can\'t connect with database : $error');
       rethrow;
     }
   }
@@ -131,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
         }
       }
     } catch (error) {
-      print('Erreur de connexion avec Google : $error');
+      print('Error can\'t connect with google : $error');
     }
   }
 
@@ -170,10 +171,10 @@ class _MyHomePageState extends State<MyHomePage> {
     if (permission == LocationPermission.denied || !isLocationServiceEnabled) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        throw Exception("Non autorisé");
+        throw Exception("Unautorized");
       }
       if (!isLocationServiceEnabled) {
-        throw Exception("Service de localisation désactivé");
+        throw Exception("Localisation disabled");
       }
     }
   }
@@ -225,12 +226,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   passwordController.clear();
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text("Utilisateur inconnu"),
+                      content: Text("Unknown user or wrong password"),
                     ),
                   );
                 }
               },
-              child: const Text("Connexion"),
+              child: const Text("Sign in"),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -242,11 +243,11 @@ class _MyHomePageState extends State<MyHomePage> {
                           )),
                 );
               },
-              child: const Text("Inscription"),
+              child: const Text("Sign up"),
             ),
             ElevatedButton(
               onPressed: _handleGoogleSignIn,
-              child: const Text('Se connecter avec Google'),
+              child: const Text('Sign in with Google'),
             ),
           ],
         ),

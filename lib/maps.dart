@@ -52,7 +52,6 @@ class MapsState extends State<Maps> {
     }
   }
 
-  //TODO pas les markers trouvé dans minimaps et erreur dans maps
   Future<void> getMarkers() async {
     if (position == null) return;
 
@@ -64,16 +63,8 @@ class MapsState extends State<Maps> {
     setState(() {
       markers.clear();
       for (var location in collection) {
-        print("--------- on tits -------------");
-        print(location['coordinates']?['coordinates'].toString());
-        print("--------- on tits -------------");
-
         var coordinates = location['coordinates']?['coordinates'];
         if (coordinates != null && coordinates.length >= 2) {
-          print("--------on hit --------");
-          print(coordinates[1]);
-          print(coordinates[0]);
-          print("--------on hit --------");
           markers.add(
             Marker(
               markerId: MarkerId(location['_id'].toString()),
@@ -171,9 +162,9 @@ class MapsState extends State<Maps> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: CustomBottomNavigationBar(
-        user: widget.user,
         selectedIndex: widget.selectedIndex,
         onItemSelected: widget.onPageSelected,
+        user: widget.user,
       ),
       body: FutureBuilder<Position>(
         future: getCurrentLocation(),

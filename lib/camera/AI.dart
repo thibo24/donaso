@@ -78,9 +78,9 @@ class _TfliteModelState extends State<TfliteModel> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: CustomBottomNavigationBar(
-        user: widget.user,
         selectedIndex: widget.selectedItem,
         onItemSelected: widget.onItemSelected,
+        user: widget.user,
       ),
       backgroundColor: Colors.white,
       body: FutureBuilder<Categorie>(
@@ -119,7 +119,9 @@ class _TfliteModelState extends State<TfliteModel> {
                             width: 120.0,
                             decoration: BoxDecoration(
                               image: DecorationImage(
-                                image: NetworkImage(categorie.image),
+                                image: AssetImage(
+                                    "assets/images/categoryPicture/" +
+                                        categorie.image),
                                 fit: BoxFit.fill,
                               ),
                               shape: BoxShape.rectangle,

@@ -118,7 +118,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                         passwordController.text,
                         emailController.text,
                         phoneController.text,
-                        null);
+                        "defaut.png");
                   } else {
                     showDialog(
                       context: context,
