@@ -87,17 +87,17 @@ class MapsState extends State<Maps> {
     if (permission == LocationPermission.denied || !isLocationServiceEnabled) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        throw Exception("Non autorisé");
+        throw Exception("Unauthorized");
       }
       if (!isLocationServiceEnabled) {
-        throw Exception("Service de localisation désactivé");
+        throw Exception("Localisations services are disabled");
       }
     }
   }
 
   Future<void> loadbasicBin() async {
     try {
-      print("Chargement de l'icône du marqueur");
+      print("markers icon loadings");
       print(markers.length);
       final Uint8List markerBasicBin = await getBytesFromAsset(
         'assets/images/recycling-bin-3.png',
@@ -117,7 +117,7 @@ class MapsState extends State<Maps> {
         compostBin = BitmapDescriptor.fromBytes(markerCompostBin);
       });
     } catch (e) {
-      print('Erreur lors du chargement de l\'icône du marqueur : $e');
+      print('Error during loading of markers icones : $e');
     }
   }
 
@@ -136,14 +136,14 @@ class MapsState extends State<Maps> {
   Future<Position> getCurrentLocation() async {
     bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!isLocationServiceEnabled) {
-      throw Exception("Services de localisation désactivés");
+      throw Exception("Localisations services are disabled");
     }
 
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        throw Exception("Non autorisé");
+        throw Exception("Unautorized");
       }
     }
 
@@ -188,7 +188,7 @@ class MapsState extends State<Maps> {
           } else if (snapshot.hasError) {
             return Center(
               child: Text(
-                  'Impossible de récupérer la position actuelle: ${snapshot.error}'),
+                  'Unable to retrieve current position: ${snapshot.error}'),
             );
           } else {
             return const Center(
