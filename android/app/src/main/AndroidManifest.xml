@@ -54,20 +54,20 @@
                 android:value="2" />
         <meta-data
                 android:name="com.google.android.geo.API_KEY"
-                android:value="AIzaSyAZL0YlgZSxFfUVD7PK8eEcqM4eGfz--z0" />
+                android:value="YOUR-API-KEY" />
 
         <meta-data
                 android:name="com.google.android.gms.version"
                 android:value="@integer/google_play_services_version" />
         <meta-data
                 android:name="com.google.android.gms.games.APP_ID"
-                android:value="146537769855-i723mvagrrl3q3l5bcvme57101ndi8of.apps.googleusercontent.com" />
+                android:value="YOUR-API-KEY" />
         <meta-data
                 android:name="com.google.android.gms.appstate.APP_ID"
-                android:value="146537769855-i723mvagrrl3q3l5bcvme57101ndi8of.apps.googleusercontent.com" />
+                android:value="YOUR-API-KEY" />
         <meta-data
                 android:name="com.google.android.gms.ads.APPLICATION_ID"
-                android:value="146537769855-i723mvagrrl3q3l5bcvme57101ndi8of.apps.googleusercontent.com" />
+                android:value="YOUR-API-KEY" />
 
     </application>
 
