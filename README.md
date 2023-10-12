@@ -16,9 +16,9 @@ For help getting started with Flutter development, view the
 samples, guidance on mobile development, and a full API reference.
 
 
-Config of gg maps api : 
-you must register on goolge maps to get an api keys.
-you create a new applications then you create a new project we only needs google maps basic fonctionality so its should be free.
+Config of google maps api : 
+you must register on google maps to get an api keys.
+you create a new application then you create a new project we only need google maps basic fonctionalities so it should be free.
 
 Database 
 as a database we used Mangodb 
